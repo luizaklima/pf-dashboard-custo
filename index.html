@@ -1,334 +1,2417 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Custozin - Análise de Custos | Team Krempel</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: #333;
-            padding: 20px;
-        }
-        
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-        
-        .header {
-            background: white;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            margin-bottom: 30px;
-        }
-        
-        .header h1 {
-            font-size: 32px;
-            color: #667eea;
-            margin-bottom: 10px;
-        }
-        
-        .header .subtitle {
-            color: #666;
-            font-size: 14px;
-        }
-        
-        .tabs {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-        
-        .tab {
-            background: white;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 500;
-            transition: all 0.3s;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        
-        .tab:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-        }
-        
-        .tab.active {
-            background: #667eea;
-            color: white;
-        }
-        
-        .tab-content {
-            display: none;
-        }
-        
-        .tab-content.active {
-            display: block;
-        }
-        
-        .cards {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-        
-        .card {
-            background: white;
-            padding: 24px;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-        
-        .card-title {
-            font-size: 14px;
-            color: #666;
-            margin-bottom: 8px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        
-        .card-value {
-            font-size: 36px;
-            font-weight: 700;
-            color: #333;
-            margin-bottom: 8px;
-        }
-        
-        .card-value.red {
-            color: #e53e3e;
-        }
-        
-        .card-value.green {
-            color: #38a169;
-        }
-        
-        .card-value.yellow {
-            color: #d69e2e;
-        }
-        
-        .card-subtitle {
-            font-size: 12px;
-            color: #999;
-        }
-        
-        .table-container {
-            background: white;
-            border-radius: 12px;
-            padding: 24px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            overflow-x: auto;
-        }
-        
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        
-        th {
-            text-align: left;
-            padding: 12px;
-            background: #f7fafc;
-            font-size: 12px;
-            font-weight: 600;
-            color: #666;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            border-bottom: 2px solid #e2e8f0;
-        }
-        
-        td {
-            padding: 12px;
-            border-bottom: 1px solid #e2e8f0;
-            font-size: 14px;
-        }
-        
-        tr:hover {
-            background: #f7fafc;
-        }
-        
-        .badge {
-            display: inline-block;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 11px;
-            font-weight: 600;
-            text-transform: uppercase;
-        }
-        
-        .badge.critical {
-            background: #fed7d7;
-            color: #c53030;
-        }
-        
-        .badge.high {
-            background: #feebc8;
-            color: #c05621;
-        }
-        
-        .badge.medium {
-            background: #fef5e7;
-            color: #975a16;
-        }
-        
-        .badge.low {
-            background: #c6f6d5;
-            color: #22543d;
-        }
-        
-        .footer {
-            text-align: center;
-            color: white;
-            margin-top: 40px;
-            font-size: 12px;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Custozin - Custos e Utilização | Team Krempel</title>
+  <style>
+    :root {
+      --bg: #0f1117;
+      --surface: #1a1d27;
+      --surface-2: #242836;
+      --border: #2e3346;
+      --text: #e4e6f0;
+      --text-2: #9aa3b2;
+      --accent: #5b8def;
+      --critical: #ff5d5d;
+      --high: #ff9f43;
+      --medium: #ffd166;
+      --low: #4cd97b;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+    .container {
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 24px 28px 40px;
+    }
+    .header {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 24px 28px;
+      margin-bottom: 20px;
+    }
+    .title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 28px;
+      font-weight: 700;
+      margin: 0 0 8px;
+    }
+    .subtitle {
+      color: var(--text-2);
+      font-size: 14px;
+    }
+    .tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 18px 0 24px;
+    }
+    .tab {
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      border-radius: 999px;
+      padding: 10px 16px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 600;
+    }
+    .tab.active {
+      background: var(--accent);
+      border-color: var(--accent);
+    }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 18px;
+    }
+    .card-title {
+      color: var(--text-2);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 8px;
+    }
+    .card-value {
+      font-size: 32px;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+    .card-subtitle {
+      color: var(--text-2);
+      font-size: 13px;
+    }
+    .panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 20px;
+      overflow-x: auto;
+    }
+    .panel h3 {
+      margin: 0 0 14px;
+      font-size: 17px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 920px;
+    }
+    th, td {
+      padding: 12px 10px;
+      border-bottom: 1px solid var(--border);
+      text-align: left;
+      font-size: 13px;
+    }
+    th {
+      color: var(--text-2);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      font-size: 11px;
+      position: sticky;
+      top: 0;
+      background: var(--surface);
+    }
+    tr:hover td {
+      background: rgba(255, 255, 255, 0.02);
+    }
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 20px;
+    }
+    .badge {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+    }
+    .badge.critical { background: rgba(255, 93, 93, 0.18); color: var(--critical); }
+    .badge.high { background: rgba(255, 159, 67, 0.18); color: var(--high); }
+    .badge.medium { background: rgba(255, 209, 102, 0.18); color: var(--medium); }
+    .badge.low { background: rgba(76, 217, 123, 0.18); color: var(--low); }
+    .hint {
+      color: var(--text-2);
+      font-size: 13px;
+      margin-top: 8px;
+    }
+    @media (max-width: 1100px) {
+      .grid-2 { grid-template-columns: 1fr; }
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>💰 Custozin - Análise de Custos</h1>
-            <div class="subtitle">Team Krempel (~115 tabelas) | Atualizado em 2026-03-19 15:28:03</div>
-        </div>
-        
-        <div class="tabs">
-            <button class="tab active" onclick="switchTab('overview')">📊 Overview</button>
-            <button class="tab" onclick="switchTab('problems')">🚨 Problemas</button>
-            <button class="tab" onclick="switchTab('details')">📋 Detalhes</button>
-        </div>
-        
-        <!-- TAB: OVERVIEW -->
-        <div id="overview" class="tab-content active">
-            <div class="cards">
-                <div class="card">
-                    <div class="card-title">Total de Tabelas</div>
-                    <div class="card-value">115</div>
-                    <div class="card-subtitle">Team Krempel</div>
-                </div>
-                
-                <div class="card">
-                    <div class="card-title">Custo Total (30d)</div>
-                    <div class="card-value">US$ 12,543.75</div>
-                    <div class="card-subtitle">Últimos 30 dias</div>
-                </div>
-                
-                <div class="card">
-                    <div class="card-title">Tabelas sem Uso</div>
-                    <div class="card-value red">8</div>
-                    <div class="card-subtitle">US$ 342.50 desperdiçados</div>
-                </div>
-                
-                <div class="card">
-                    <div class="card-title">Alto Custo / Baixo Uso</div>
-                    <div class="card-value yellow">12</div>
-                    <div class="card-subtitle">Candidatas a otimização</div>
-                </div>
-            </div>
-            
-            <div class="table-container">
-                <h3 style="margin-bottom: 20px;">💸 Top 10 Tabelas por Custo</h3>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Tabela</th>
-                            <th>Custo (30d)</th>
-                            <th>Uso (30d)</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-
-                        <tr>
-                            <td><strong>pf_monthly_transactions</strong></td>
-                            <td>US$ 1,234.56</td>
-                            <td>0 queries</td>
-                            <td><span class="badge critical">CRITICAL: Zero usage with cost</span></td>
-                        </tr>
-
-                        <tr>
-                            <td><strong>pf_daily_aggregates</strong></td>
-                            <td>US$ 987.32</td>
-                            <td>45 queries</td>
-                            <td><span class="badge high">HIGH: Expensive with low usage</span></td>
-                        </tr>
-
-                    </tbody>
-                </table>
-            </div>
-        </div>
-        
-        <!-- TAB: PROBLEMS -->
-        <div id="problems" class="tab-content">
-            <div class="table-container">
-                <h3 style="margin-bottom: 20px;">🚨 Tabelas Problemáticas</h3>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Tabela</th>
-                            <th>Custo (30d)</th>
-                            <th>Uso (30d)</th>
-                            <th>Custo/Uso</th>
-                            <th>Severidade</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-
-                        <tr>
-                            <td><strong>pf_monthly_transactions</strong></td>
-                            <td>US$ 1,234.56</td>
-                            <td>0</td>
-                            <td>US$ 0.0000</td>
-                            <td><span class="badge critical">CRITICAL: Zero usage with cost</span></td>
-                        </tr>
-
-                        <tr>
-                            <td><strong>pf_daily_aggregates</strong></td>
-                            <td>US$ 987.32</td>
-                            <td>45</td>
-                            <td>US$ 21.9400</td>
-                            <td><span class="badge high">HIGH: Expensive with low usage</span></td>
-                        </tr>
-
-                    </tbody>
-                </table>
-            </div>
-        </div>
-        
-        <!-- TAB: DETAILS -->
-        <div id="details" class="tab-content">
-            <div class="table-container">
-                <h3 style="margin-bottom: 20px;">📋 Todas as Tabelas</h3>
-                <p style="color: #666; margin-bottom: 20px;">Em desenvolvimento. Use as queries diretamente para análise detalhada.</p>
-            </div>
-        </div>
-        
-        <div class="footer">
-            🐺 Wolf | Custozin Skill | PicPay Self-Service Analytics
-        </div>
+  <div class="container">
+    <div class="header">
+      <h1 class="title">💰 Custozin</h1>
+      <div class="subtitle">Team Krempel | Mês de referência 2026-03 | Atualizado em 2026-03-19 16:00:19 BRT</div>
     </div>
-    
-    <script>
-        function switchTab(tabName) {
-            // Remove active de todos
-            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+
+    <div class="tabs">
+      <button class="tab active" onclick="switchTab(event, 'overview')">📊 Overview</button>
+      <button class="tab" onclick="switchTab(event, 'problems')">🚨 Problemas</button>
+      <button class="tab" onclick="switchTab(event, 'details')">📋 Detalhes</button>
+    </div>
+
+    <div id="overview" class="tab-content active">
+      <div class="cards">
+        <div class="card">
+          <div class="card-title">Total de tabelas</div>
+          <div class="card-value">115</div>
+          <div class="card-subtitle">Recorte Krempel com `picpay-ss-airflow`</div>
+        </div>
+        <div class="card">
+          <div class="card-title">Custo mensal</div>
+          <div class="card-value">US$ 16,508.36</div>
+          <div class="card-subtitle">Processing US$ 14,924.38 | Storage US$ 1,583.98</div>
+        </div>
+        <div class="card">
+          <div class="card-title">Utilização mensal</div>
+          <div class="card-value">36.782</div>
+          <div class="card-subtitle">Soma de usos do mês</div>
+        </div>
+        <div class="card">
+          <div class="card-title">Sem uso com custo</div>
+          <div class="card-value">1</div>
+          <div class="card-subtitle">Tabelas com custo > 0 e uso = 0</div>
+        </div>
+        <div class="card">
+          <div class="card-title">Alto custo / baixo uso</div>
+          <div class="card-value">4</div>
+          <div class="card-subtitle">Severidade `HIGH` ou `CRITICAL`</div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="panel">
+          <h3>💸 Top 10 tabelas por custo</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Tabela</th>
+                <th>Owner</th>
+                <th>Gestor</th>
+                <th>Custo</th>
+                <th>Proc.</th>
+                <th>Storage</th>
+                <th>Uso</th>
+                <th>Custo/Uso</th>
+                <th>Tier</th>
+                <th>Últ. uso</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              
+            <tr>
+              <td><strong>pf_consumers_daily_finance_results</strong></td>
+              <td>luiz.lima</td>
+              <td>GABRIEL LOPES CARDOSO</td>
+              <td>US$ 4,556.01</td>
+              <td>US$ 4,307.25</td>
+              <td>US$ 248.76</td>
+              <td>2.533</td>
+              <td>US$ 1.80</td>
+              <td>2</td>
+              <td>2026-03-18</td>
+              <td><span class="badge low">LOW</span></td>
+              
+            </tr>
             
-            // Adiciona active no clicado
-            event.target.classList.add('active');
-            document.getElementById(tabName).classList.add('active');
-        }
-    </script>
+            <tr>
+              <td><strong>pf_consumers_finance_metrics</strong></td>
+              <td>luiz.lima</td>
+              <td>GABRIEL LOPES CARDOSO</td>
+              <td>US$ 1,261.20</td>
+              <td>US$ 1,261.20</td>
+              <td>US$ 0.00</td>
+              <td>25</td>
+              <td>US$ 50.45</td>
+              <td>3</td>
+              <td>2026-03-17</td>
+              <td><span class="badge high">HIGH</span></td>
+              
+            </tr>
+            
+            <tr>
+              <td><strong>pf_consumers_daily_finance_results_agg</strong></td>
+              <td>luiz.lima</td>
+              <td>GABRIEL LOPES CARDOSO</td>
+              <td>US$ 1,159.06</td>
+              <td>US$ 1,158.80</td>
+              <td>US$ 0.26</td>
+              <td>957</td>
+              <td>US$ 1.21</td>
+              <td>4</td>
+              <td>2026-03-18</td>
+              <td><span class="badge low">LOW</span></td>
+              
+            </tr>
+            
+            <tr>
+              <td><strong>pf_products_transactions</strong></td>
+              <td>luiz.lima</td>
+              <td>GABRIEL LOPES CARDOSO</td>
+              <td>US$ 961.97</td>
+              <td>US$ 530.26</td>
+              <td>US$ 431.70</td>
+              <td>8.127</td>
+              <td>US$ 0.12</td>
+              <td>2</td>
+              <td>2026-03-18</td>
+              <td><span class="badge low">LOW</span></td>
+              
+            </tr>
+            
+            <tr>
+              <td><strong>wallet_pf_cross_mat_synth</strong></td>
+              <td>daniela.costa</td>
+              <td>GABRIEL LOPES CARDOSO</td>
+              <td>US$ 872.03</td>
+              <td>US$ 872.03</td>
+              <td>US$ 0.00</td>
+              <td>9</td>
+              <td>US$ 96.89</td>
+              <td>3</td>
+              <td>2026-03-11</td>
+              <td><span class="badge high">HIGH</span></td>
+              
+            </tr>
+            
+            <tr>
+              <td><strong>pf_growth_metrics</strong></td>
+              <td>higor.jesus</td>
+              <td>DIEGO FERREIRA ADORNO</td>
+              <td>US$ 673.95</td>
+              <td>US$ 449.82</td>
+              <td>US$ 224.13</td>
+              <td>1.059</td>
+              <td>US$ 0.64</td>
+              <td>2</td>
+              <td>2026-03-18</td>
+              <td><span class="badge low">LOW</span></td>
+              
+            </tr>
+            
+            <tr>
+              <td><strong>sfpf_consumers_alias</strong></td>
+              <td>henrique.ppereira</td>
+              <td>GABRIEL LOPES CARDOSO</td>
+              <td>US$ 468.12</td>
+              <td>US$ 467.61</td>
+              <td>US$ 0.51</td>
+              <td>194</td>
+              <td>US$ 2.41</td>
+              <td>3</td>
+              <td>2026-03-18</td>
+              <td><span class="badge low">LOW</span></td>
+              
+            </tr>
+            
+            <tr>
+              <td><strong>pf_growth_clients_conversion</strong></td>
+              <td>higor.jesus</td>
+              <td>DIEGO FERREIRA ADORNO</td>
+              <td>US$ 429.15</td>
+              <td>US$ 319.54</td>
+              <td>US$ 109.61</td>
+              <td>523</td>
+              <td>US$ 0.82</td>
+              <td>2</td>
+              <td>2026-03-18</td>
+              <td><span class="badge low">LOW</span></td>
+              
+            </tr>
+            
+            <tr>
+              <td><strong>pf_growth_dash_products_view</strong></td>
+              <td>higor.jesus</td>
+              <td>DIEGO FERREIRA ADORNO</td>
+              <td>US$ 408.94</td>
+              <td>US$ 408.94</td>
+              <td>US$ 0.00</td>
+              <td>263</td>
+              <td>US$ 1.55</td>
+              <td>2</td>
+              <td>2026-03-18</td>
+              <td><span class="badge low">LOW</span></td>
+              
+            </tr>
+            
+            <tr>
+              <td><strong>pf_growth_notifications_engagement</strong></td>
+              <td>henrique.ppereira</td>
+              <td>GABRIEL LOPES CARDOSO</td>
+              <td>US$ 306.53</td>
+              <td>US$ 268.43</td>
+              <td>US$ 38.11</td>
+              <td>1.101</td>
+              <td>US$ 0.28</td>
+              <td>4</td>
+              <td>2026-03-18</td>
+              <td><span class="badge low">LOW</span></td>
+              
+            </tr>
+            
+            </tbody>
+          </table>
+        </div>
+
+        <div class="panel">
+          <h3>👥 Custo por gestor</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Gestor</th>
+                <th>Custo</th>
+                <th>Uso</th>
+                <th>Tabelas</th>
+              </tr>
+            </thead>
+            <tbody>
+              
+            <tr>
+              <td><strong>GABRIEL LOPES CARDOSO</strong></td>
+              <td>US$ 12,747.57</td>
+              <td>29.224</td>
+              <td>72</td>
+            </tr>
+            
+            <tr>
+              <td><strong>DIEGO FERREIRA ADORNO</strong></td>
+              <td>US$ 1,928.86</td>
+              <td>2.872</td>
+              <td>14</td>
+            </tr>
+            
+            <tr>
+              <td><strong>PIETRO BISELLI FERREIRA</strong></td>
+              <td>US$ 1,382.47</td>
+              <td>4.559</td>
+              <td>21</td>
+            </tr>
+            
+            <tr>
+              <td><strong>HENRIQUE LOREA LEITE</strong></td>
+              <td>US$ 409.53</td>
+              <td>109</td>
+              <td>7</td>
+            </tr>
+            
+            <tr>
+              <td><strong>MANOELA BRIENZA SOBRAL</strong></td>
+              <td>US$ 39.93</td>
+              <td>18</td>
+              <td>1</td>
+            </tr>
+            
+            </tbody>
+          </table>
+          <div class="hint">Ajuda a priorizar revisão de custo por frente de trabalho.</div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h3>📈 Tendência mensal</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Mês</th>
+              <th>Custo total</th>
+              <th>Processing</th>
+              <th>Storage</th>
+              <th>Uso</th>
+              <th>Sem uso com custo</th>
+            </tr>
+          </thead>
+          <tbody>
+            
+            <tr>
+              <td><strong>2025-10</strong></td>
+              <td>US$ 19,836.01</td>
+              <td>US$ 17,591.11</td>
+              <td>US$ 2,244.90</td>
+              <td>64.377</td>
+              <td>0</td>
+            </tr>
+            
+            <tr>
+              <td><strong>2025-11</strong></td>
+              <td>US$ 16,696.15</td>
+              <td>US$ 14,736.49</td>
+              <td>US$ 1,959.66</td>
+              <td>59.274</td>
+              <td>0</td>
+            </tr>
+            
+            <tr>
+              <td><strong>2025-12</strong></td>
+              <td>US$ 25,601.23</td>
+              <td>US$ 23,508.30</td>
+              <td>US$ 2,092.92</td>
+              <td>66.765</td>
+              <td>0</td>
+            </tr>
+            
+            <tr>
+              <td><strong>2026-01</strong></td>
+              <td>US$ 31,485.47</td>
+              <td>US$ 29,353.19</td>
+              <td>US$ 2,132.28</td>
+              <td>75.635</td>
+              <td>0</td>
+            </tr>
+            
+            <tr>
+              <td><strong>2026-02</strong></td>
+              <td>US$ 27,744.25</td>
+              <td>US$ 24,877.30</td>
+              <td>US$ 2,866.95</td>
+              <td>51.029</td>
+              <td>1</td>
+            </tr>
+            
+            <tr>
+              <td><strong>2026-03</strong></td>
+              <td>US$ 16,508.36</td>
+              <td>US$ 14,924.38</td>
+              <td>US$ 1,583.98</td>
+              <td>36.782</td>
+              <td>1</td>
+            </tr>
+            
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div id="problems" class="tab-content">
+      <div class="panel">
+        <h3>🚨 Tabelas problemáticas</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Tabela</th>
+              <th>Owner</th>
+              <th>Gestor</th>
+              <th>Custo</th>
+              <th>Proc.</th>
+              <th>Storage</th>
+              <th>Uso</th>
+              <th>Custo/Uso</th>
+              <th>Tier</th>
+              <th>Últ. uso</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            
+            <tr>
+              <td><strong>pf_consumers_finance_metrics</strong></td>
+              <td>luiz.lima</td>
+              <td>GABRIEL LOPES CARDOSO</td>
+              <td>US$ 1,261.20</td>
+              <td>US$ 1,261.20</td>
+              <td>US$ 0.00</td>
+              <td>25</td>
+              <td>US$ 50.45</td>
+              <td>3</td>
+              <td>2026-03-17</td>
+              <td><span class="badge high">HIGH</span></td>
+              
+            </tr>
+            
+            <tr>
+              <td><strong>wallet_pf_cross_mat_synth</strong></td>
+              <td>daniela.costa</td>
+              <td>GABRIEL LOPES CARDOSO</td>
+              <td>US$ 872.03</td>
+              <td>US$ 872.03</td>
+              <td>US$ 0.00</td>
+              <td>9</td>
+              <td>US$ 96.89</td>
+              <td>3</td>
+              <td>2026-03-11</td>
+              <td><span class="badge high">HIGH</span></td>
+              
+            </tr>
+            
+            <tr>
+              <td><strong>home_four_rollout_1</strong></td>
+              <td>fernanda.leite</td>
+              <td>HENRIQUE LOREA LEITE</td>
+              <td>US$ 276.81</td>
+              <td>US$ 276.79</td>
+              <td>US$ 0.02</td>
+              <td>10</td>
+              <td>US$ 27.68</td>
+              <td>3</td>
+              <td>2026-03-10</td>
+              <td><span class="badge high">HIGH</span></td>
+              
+            </tr>
+            
+            <tr>
+              <td><strong>pf_consumers_payments_transactions</strong></td>
+              <td>adeilton.azevedo</td>
+              <td>GABRIEL LOPES CARDOSO</td>
+              <td>US$ 206.23</td>
+              <td>US$ 206.23</td>
+              <td>US$ 0.00</td>
+              <td>14</td>
+              <td>US$ 14.73</td>
+              <td>3</td>
+              <td>2026-03-12</td>
+              <td><span class="badge medium">MEDIUM</span></td>
+              
+            </tr>
+            
+            <tr>
+              <td><strong>pf_harvest_tpv_wallet</strong></td>
+              <td>adeilton.azevedo</td>
+              <td>GABRIEL LOPES CARDOSO</td>
+              <td>US$ 172.57</td>
+              <td>US$ 135.07</td>
+              <td>US$ 37.50</td>
+              <td>12</td>
+              <td>US$ 14.38</td>
+              <td>2</td>
+              <td>2026-03-11</td>
+              <td><span class="badge medium">MEDIUM</span></td>
+              
+            </tr>
+            
+            <tr>
+              <td><strong>wallet_pf_cross_bookgeral_synth</strong></td>
+              <td>adeilton.azevedo</td>
+              <td>GABRIEL LOPES CARDOSO</td>
+              <td>US$ 160.43</td>
+              <td>US$ 160.43</td>
+              <td>US$ 0.00</td>
+              <td>16</td>
+              <td>US$ 10.03</td>
+              <td>4</td>
+              <td>2026-03-18</td>
+              <td><span class="badge medium">MEDIUM</span></td>
+              
+            </tr>
+            
+            <tr>
+              <td><strong>pf_consumers_finance_results_transactions_cdb</strong></td>
+              <td>adeilton.azevedo</td>
+              <td>GABRIEL LOPES CARDOSO</td>
+              <td>US$ 98.74</td>
+              <td>US$ 20.38</td>
+              <td>US$ 78.36</td>
+              <td>6</td>
+              <td>US$ 16.46</td>
+              <td>2</td>
+              <td>2026-03-11</td>
+              <td><span class="badge medium">MEDIUM</span></td>
+              
+            </tr>
+            
+            <tr>
+              <td><strong>base_of_growth_leverage</strong></td>
+              <td>anny.aguiar</td>
+              <td>PIETRO BISELLI FERREIRA</td>
+              <td>US$ 7.45</td>
+              <td>US$ 7.45</td>
+              <td>US$ 0.00</td>
+              <td>0</td>
+              <td>—</td>
+              <td>3</td>
+              <td>—</td>
+              <td><span class="badge critical">CRITICAL</span></td>
+              
+            </tr>
+            
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div id="details" class="tab-content">
+      <div class="panel">
+        <h3>📋 Todas as tabelas</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Tabela</th>
+              <th>Owner</th>
+              <th>Gestor</th>
+              <th>Custo</th>
+              <th>Proc.</th>
+              <th>Storage</th>
+              <th>Uso</th>
+              <th>Custo/Uso</th>
+              <th>Tier</th>
+              <th>Últ. uso</th>
+              <th>Status</th>
+              <th>Tamanho (GB)</th>
+            </tr>
+          </thead>
+          <tbody>
+            
+            <tr>
+              <td><strong>pf_consumers_daily_finance_results</strong></td>
+              <td>luiz.lima</td>
+              <td>GABRIEL LOPES CARDOSO</td>
+              <td>US$ 4,556.01</td>
+              <td>US$ 4,307.25</td>
+              <td>US$ 248.76</td>
+              <td>2.533</td>
+              <td>US$ 1.80</td>
+              <td>2</td>
+              <td>2026-03-18</td>
+              <td><span class="badge low">LOW</span></td>
+              <td>0.00</td>
+            </tr>
+            
+            <tr>
+              <td><strong>pf_consumers_finance_metrics</strong></td>
+              <td>luiz.lima</td>
+              <td>GABRIEL LOPES CARDOSO</td>
+              <td>US$ 1,261.20</td>
+              <td>US$ 1,261.20</td>
+              <td>US$ 0.00</td>
+              <td>25</td>
+              <td>US$ 50.45</td>
+              <td>3</td>
+              <td>2026-03-17</td>
+              <td><span class="badge high">HIGH</span></td>
+              <td>0.00</td>
+            </tr>
+            
+            <tr>
+              <td><strong>pf_consumers_daily_finance_results_agg</strong></td>
+              <td>luiz.lima</td>
+              <td>GABRIEL LOPES CARDOSO</td>
+              <td>US$ 1,159.06</td>
+              <td>US$ 1,158.80</td>
+              <td>US$ 0.26</td>
+              <td>957</td>
+              <td>US$ 1.21</td>
+              <td>4</td>
+              <td>2026-03-18</td>
+              <td><span class="badge low">LOW</span></td>
+              <td>0.00</td>
+            </tr>
+            
+            <tr>
+              <td><strong>pf_products_transactions</strong></td>
+              <td>luiz.lima</td>
+              <td>GABRIEL LOPES CARDOSO</td>
+              <td>US$ 961.97</td>
+              <td>US$ 530.26</td>
+              <td>US$ 431.70</td>
+              <td>8.127</td>
+              <td>US$ 0.12</td>
+              <td>2</td>
+              <td>2026-03-18</td>
+              <td><span class="badge low">LOW</span></td>
+              <td>0.00</td>
+            </tr>
+            
+            <tr>
+              <td><strong>wallet_pf_cross_mat_synth</strong></td>
+              <td>daniela.costa</td>
+              <td>GABRIEL LOPES CARDOSO</td>
+              <td>US$ 872.03</td>
+              <td>US$ 872.03</td>
+              <td>US$ 0.00</td>
+              <td>9</td>
+              <td>US$ 96.89</td>
+              <td>3</td>
+              <td>2026-03-11</td>
+              <td><span class="badge high">HIGH</span></td>
+              <td>0.00</td>
+            </tr>
+            
+            <tr>
+              <td><strong>pf_growth_metrics</strong></td>
+              <td>higor.jesus</td>
+              <td>DIEGO FERREIRA ADORNO</td>
+              <td>US$ 673.95</td>
+              <td>US$ 449.82</td>
+              <td>US$ 224.13</td>
+              <td>1.059</td>
+              <td>US$ 0.64</td>
+              <td>2</td>
+              <td>2026-03-18</td>
+              <td><span class="badge low">LOW</span></td>
+              <td>0.00</td>
+            </tr>
+            
+            <tr>
+              <td><strong>sfpf_consumers_alias</strong></td>
+              <td>henrique.ppereira</td>
+              <td>GABRIEL LOPES CARDOSO</td>
+              <td>US$ 468.12</td>
+              <td>US$ 467.61</td>
+              <td>US$ 0.51</td>
+              <td>194</td>
+              <td>US$ 2.41</td>
+              <td>3</td>
+              <td>2026-03-18</td>
+              <td><span class="badge low">LOW</span></td>
+              <td>0.00</td>
+            </tr>
+            
+            <tr>
+              <td><strong>pf_growth_clients_conversion</strong></td>
+              <td>higor.jesus</td>
+              <td>DIEGO FERREIRA ADORNO</td>
+              <td>US$ 429.15</td>
+              <td>US$ 319.54</td>
+              <td>US$ 109.61</td>
+              <td>523</td>
+              <td>US$ 0.82</td>
+              <td>2</td>
+              <td>2026-03-18</td>
+              <td><span class="badge low">LOW</span></td>
+              <td>0.00</td>
+            </tr>
+            
+            <tr>
+              <td><strong>pf_growth_dash_products_view</strong></td>
+              <td>higor.jesus</td>
+              <td>DIEGO FERREIRA ADORNO</td>
+              <td>US$ 408.94</td>
+              <td>US$ 408.94</td>
+              <td>US$ 0.00</td>
+              <td>263</td>
+              <td>US$ 1.55</td>
+              <td>2</td>
+              <td>2026-03-18</td>
+              <td><span class="badge low">LOW</span></td>
+              <td>0.00</td>
+            </tr>
+            
+            <tr>
+              <td><strong>pf_growth_notifications_engagement</strong></td>
+              <td>henrique.ppereira</td>
+              <td>GABRIEL LOPES CARDOSO</td>
+              <td>US$ 306.53</td>
+              <td>US$ 268.43</td>
+              <td>US$ 38.11</td>
+              <td>1.101</td>
+              <td>US$ 0.28</td>
+              <td>4</td>
+              <td>2026-03-18</td>
+              <td><span class="badge low">LOW</span></td>
+              <td>0.00</td>
+            </tr>
+            
+            <tr>
+              <td><strong>home_four_rollout_1</strong></td>
+              <td>fernanda.leite</td>
+              <td>HENRIQUE LOREA LEITE</td>
+              <td>US$ 276.81</td>
+              <td>US$ 276.79</td>
+              <td>US$ 0.02</td>
+              <td>10</td>
+              <td>US$ 27.68</td>
+              <td>3</td>
+              <td>2026-03-10</td>
+              <td><span class="badge high">HIGH</span></td>
+              <td>0.00</td>
+            </tr>
+            
+            <tr>
+              <td><strong>pf_products_transactions_consumer_stages</strong></td>
+              <td>bruno.bastos</td>
+              <td>GABRIEL LOPES CARDOSO</td>
+              <td>US$ 248.11</td>
+              <td>US$ 118.67</td>
+              <td>US$ 129.43</td>
+              <td>85</td>
+              <td>US$ 2.92</td>
+              <td>2</td>
+              <td>2026-03-18</td>
+              <td><span class="badge low">LOW</span></td>
+              <td>0.00</td>
+            </tr>
+            
+            <tr>
+              <td><strong>pf_consumers_daily_finance_results_cdb</strong></td>
+              <td>luiz.lima</td>
+              <td>GABRIEL LOPES CARDOSO</td>
+              <td>US$ 224.58</td>
+              <td>US$ 73.95</td>
+              <td>US$ 150.62</td>
+              <td>124</td>
+              <td>US$ 1.81</td>
+              <td>2</td>
+              <td>2026-03-17</td>
+              <td><span class="badge low">LOW</span></td>
+              <td>0.00</td>
+            </tr>
+            
+            <tr>
+              <td><strong>cdb_picpay_bank_consumers_wallet_metrics</strong></td>
+              <td>victor.ssantos</td>
+              <td>PIETRO BISELLI FERREIRA</td>
+              <td>US$ 221.17</td>
+              <td>US$ 189.90</td>
+              <td>US$ 31.27</td>
+              <td>1.422</td>
+              <td>US$ 0.16</td>
+              <td>2</td>
+              <td>2026-03-18</td>
+              <td><span class="badge low">LOW</span></td>
+              <td>0.00</td>
+            </tr>
+            
+            <tr>
+              <td><strong>monthly_balance_income_range</strong></td>
+              <td>yasmin.costa</td>
+              <td>PIETRO BISELLI FERREIRA</td>
+              <td>US$ 218.54</td>
+              <td>US$ 218.54</td>
+              <td>US$ 0.00</td>
+              <td>244</td>
+              <td>US$ 0.90</td>
+              <td>2</td>
+              <td>2026-03-18</td>
+              <td><span class="badge low">LOW</span></td>
+              <td>0.00</td>
+            </tr>
+            
+            <tr>
+              <td><strong>pf_growth_notifications_reporting</strong></td>
+              <td>henrique.ppereira</td>
+              <td>GABRIEL LOPES CARDOSO</td>
+              <td>US$ 213.29</td>
+              <td>US$ 213.29</td>
+              <td>US$ 0.00</td>
+              <td>627</td>
+              <td>US$ 0.34</td>
+              <td>2</td>
+              <td>2026-03-18</td>
+              <td><span class="badge low">LOW</span></td>
+              <td>0.00</td>
+            </tr>
+            
+            <tr>
+              <td><strong>pf_consumers_payments_transactions</strong></td>
+              <td>adeilton.azevedo</td>
+              <td>GABRIEL LOPES CARDOSO</td>
+              <td>US$ 206.23</td>
+              <td>US$ 206.23</td>
+              <td>US$ 0.00</td>
+              <td>14</td>
+              <td>US$ 14.73</td>
+              <td>3</td>
+              <td>2026-03-12</td>
+              <td><span class="badge medium">MEDIUM</span></td>
+              <td>0.00</td>
+            </tr>
+            
+            <tr>
+              <td><strong>pf_growth_dash_graphs_view</strong></td>
+              <td>higor.jesus</td>
+              <td>DIEGO FERREIRA ADORNO</td>
+              <td>US$ 205.76</td>
+              <td>US$ 205.76</td>
+              <td>US$ 0.00</td>
+              <td>87</td>
+              <td>US$ 2.37</td>
+              <td>2</td>
+              <td>2026-03-18</td>
+              <td><span class="badge low">LOW</span></td>
+              <td>0.00</td>
+            </tr>
+            
+            <tr>
+              <td><strong>monthly_balance_range</strong></td>
+              <td>yasmin.costa</td>
+              <td>PIETRO BISELLI FERREIRA</td>
+              <td>US$ 200.67</td>
+              <td>US$ 200.67</td>
+              <td>US$ 0.00</td>
+              <td>77</td>
+              <td>US$ 2.61</td>
+              <td>2</td>
+              <td>2026-03-18</td>
+              <td><span class="badge low">LOW</span></td>
+              <td>0.00</td>
+            </tr>
+            
+            <tr>
+              <td><strong>monthly_balance_aging_range</strong></td>
+              <td>yasmin.costa</td>
+              <td>PIETRO BISELLI FERREIRA</td>
+              <td>US$ 196.91</td>
+              <td>US$ 196.91</td>
+              <td>US$ 0.00</td>
+              <td>193</td>
+              <td>US$ 1.02</td>
+              <td>2</td>
+              <td>2026-03-18</td>
+              <td><span class="badge low">LOW</span></td>
+              <td>0.00</td>
+            </tr>
+            
+            <tr>
+              <td><strong>monthly_balance_registration_time_range</strong></td>
+              <td>yasmin.costa</td>
+              <td>PIETRO BISELLI FERREIRA</td>
+              <td>US$ 191.85</td>
+              <td>US$ 191.85</td>
+              <td>US$ 0.00</td>
+              <td>76</td>
+              <td>US$ 2.52</td>
+              <td>2</td>
+              <td>2026-03-18</td>
+              <td><span class="badge low">LOW</span></td>
+              <td>0.00</td>
+            </tr>
+            
+            <tr>
+              <td><strong>pf_underage_metrics</strong></td>
+              <td>bruno.bastos</td>
+              <td>GABRIEL LOPES CARDOSO</td>
+              <td>US$ 175.05</td>
+              <td>US$ 172.23</td>
+              <td>US$ 2.82</td>
+              <td>3.395</td>
+              <td>US$ 0.05</td>
+              <td>2</td>
+              <td>2026-03-18</td>
+              <td><span class="badge low">LOW</span></td>
+              <td>0.00</td>
+            </tr>
+            
+            <tr>
+              <td><strong>pf_harvest_tpv_wallet</strong></td>
+              <td>adeilton.azevedo</td>
+              <td>GABRIEL LOPES CARDOSO</td>
+              <td>US$ 172.57</td>
+              <td>US$ 135.07</td>
+              <td>US$ 37.50</td>
+              <td>12</td>
+              <td>US$ 14.38</td>
+              <td>2</td>
+              <td>2026-03-11</td>
+              <td><span class="badge medium">MEDIUM</span></td>
+              <td>0.00</td>
+            </tr>
+            
+            <tr>
+              <td><strong>wallet_pf_cross_bookgeral_synth</strong></td>
+              <td>adeilton.azevedo</td>
+              <td>GABRIEL LOPES CARDOSO</td>
+              <td>US$ 160.43</td>
+              <td>US$ 160.43</td>
+              <td>US$ 0.00</td>
+              <td>16</td>
+              <td>US$ 10.03</td>
+              <td>4</td>
+              <td>2026-03-18</td>
+              <td><span class="badge medium">MEDIUM</span></td>
+              <td>0.00</td>
+            </tr>
+            
+            <tr>
+              <td><strong>pf_tpv_wallet</strong></td>
+              <td>adeilton.azevedo</td>
+              <td>GABRIEL LOPES CARDOSO</td>
+              <td>US$ 134.77</td>
+              <td>US$ 126.64</td>
+              <td>US$ 8.13</td>
+              <td>18</td>
+              <td>US$ 7.49</td>
+              <td>2</td>
+              <td>2026-03-11</td>
+              <td><span class="badge low">LOW</span></td>
+              <td>0.00</td>
+            </tr>
+            
+            <tr>
+              <td><strong>banking_events</strong></td>
+              <td>yasmin.costa</td>
+              <td>PIETRO BISELLI FERREIRA</td>
+              <td>US$ 124.22</td>
+              <td>US$ 124.22</td>
+              <td>US$ 0.00</td>
+              <td>63</td>
+              <td>US$ 1.97</td>
+              <td>3</td>
+              <td>2026-03-11</td>
+              <td><span class="badge low">LOW</span></td>
+              <td>0.00</td>
+            </tr>
+            
+            <tr>
+              <td><strong>pf_products_card_failed_transactions</strong></td>
+              <td>bruno.bastos</td>
+              <td>GABRIEL LOPES CARDOSO</td>
+              <td>US$ 111.30</td>
+              <td>US$ 110.30</td>
+              <td>US$ 1.00</td>
+              <td>62</td>
+              <td>US$ 1.80</td>
+              <td>2</td>
+              <td>2026-03-17</td>
+              <td><span class="badge low">LOW</span></td>
+              <td>0.00</td>
+            </tr>
+            
+            <tr>
+              <td><strong>pf_payments_dda_assistant_picpay</strong></td>
+              <td>bruno.bastos</td>
+              <td>GABRIEL LOPES CARDOSO</td>
+              <td>US$ 108.19</td>
+              <td>US$ 108.19</td>
+              <td>US$ 0.00</td>
+              <td>33</td>
+              <td>US$ 3.28</td>
+              <td>3</td>
+              <td>2026-03-11</td>
+              <td><span class="badge low">LOW</span></td>
+              <td>0.00</td>
+            </tr>
+            
+            <tr>
+              <td><strong>pf_vehicular_debts_growth_communications</strong></td>
+              <td>bruno.bastos</td>
+              <td>GABRIEL LOPES CARDOSO</td>
+              <td>US$ 107.43</td>
+              <td>US$ 107.43</td>
+              <td>US$ 0.00</td>
+              <td>42</td>
+              <td>US$ 2.56</td>
+              <td>2</td>
+              <td>2026-03-18</td>
+              <td><span class="badge low">LOW</span></td>
+              <td>0.00</td>
+            </tr>
+            
+            <tr>
+              <td><strong>pf_subscriptions_picpay_plus_funnel</strong></td>
+              <td>bruno.bastos</td>
+              <td>GABRIEL LOPES CARDOSO</td>
+              <td>US$ 105.60</td>
+              <td>US$ 105.49</td>
+              <td>US$ 0.12</td>
+              <td>1.325</td>
+              <td>US$ 0.08</td>
+              <td>2</td>
+              <td>2026-03-18</td>
+              <td><span class="badge low">LOW</span></td>
+              <td>0.00</td>
+            </tr>
+            
+            <tr>
+              <td><strong>pf_consumers_finance_results_transactions_cdb</strong></td>
+              <td>adeilton.azevedo</td>
+              <td>GABRIEL LOPES CARDOSO</td>
+              <td>US$ 98.74</td>
+              <td>US$ 20.38</td>
+              <td>US$ 78.36</td>
+              <td>6</td>
+              <td>US$ 16.46</td>
+              <td>2</td>
+              <td>2026-03-11</td>
+              <td><span class="badge medium">MEDIUM</span></td>
+              <td>0.00</td>
+            </tr>
+            
+            <tr>
+              <td><strong>pf_growth_campaigns_pvalue</strong></td>
+              <td>higor.jesus</td>
+              <td>DIEGO FERREIRA ADORNO</td>
+              <td>US$ 95.54</td>
+              <td>US$ 95.54</td>
+              <td>US$ 0.00</td>
+              <td>120</td>
+              <td>US$ 0.80</td>
+              <td>2</td>
+              <td>2026-03-18</td>
+              <td><span class="badge low">LOW</span></td>
+              <td>0.00</td>
+            </tr>
+            
+            <tr>
+              <td><strong>pf_growth_campaign_message_events</strong></td>
+              <td>henrique.ppereira</td>
+              <td>GABRIEL LOPES CARDOSO</td>
+              <td>US$ 92.53</td>
+              <td>US$ 75.59</td>
+              <td>US$ 16.94</td>
+              <td>1.906</td>
+              <td>US$ 0.05</td>
+              <td>2</td>
+              <td>2026-03-18</td>
+              <td><span class="badge low">LOW</span></td>
+              <td>0.00</td>
+            </tr>
+            
+            <tr>
+              <td><strong>wallets_daily_metrics</strong></td>
+              <td>yasmin.costa</td>
+              <td>PIETRO BISELLI FERREIRA</td>
+              <td>US$ 85.45</td>
+              <td>US$ 85.45</td>
+              <td>US$ 0.00</td>
+              <td>239</td>
+              <td>US$ 0.36</td>
+              <td>2</td>
+              <td>2026-03-18</td>
+              <td><span class="badge low">LOW</span></td>
+              <td>0.00</td>
+            </tr>
+            
+            <tr>
+              <td><strong>pf_wallet_banking_on_us_ppcard_users</strong></td>
+              <td>bruno.bastos</td>
+              <td>GABRIEL LOPES CARDOSO</td>
+              <td>US$ 83.92</td>
+              <td>US$ 71.44</td>
+              <td>US$ 12.48</td>
+              <td>11</td>
+              <td>US$ 7.63</td>
+              <td>2</td>
+              <td>2026-03-11</td>
+              <td><span class="badge low">LOW</span></td>
+              <td>0.00</td>
+            </tr>
+            
+            <tr>
+              <td><strong>web_crm_segments_consumers</strong></td>
+              <td>felipe.silveira</td>
+              <td>GABRIEL LOPES CARDOSO</td>
+              <td>US$ 81.42</td>
+              <td>US$ 81.31</td>
+              <td>US$ 0.10</td>
+              <td>15</td>
+              <td>US$ 5.43</td>
+              <td>3</td>
+              <td>2026-03-11</td>
+              <td><span class="badge low">LOW</span></td>
+              <td>0.78</td>
+            </tr>
+            
+            <tr>
+              <td><strong>pf_p2p_transactions_waterfall</strong></td>
+              <td>adeilton.azevedo</td>
+              <td>GABRIEL LOPES CARDOSO</td>
+              <td>US$ 62.97</td>
+              <td>US$ 62.83</td>
+              <td>US$ 0.14</td>
+              <td>13</td>
+              <td>US$ 4.84</td>
+              <td>2</td>
+              <td>2026-03-12</td>
+              <td><span class="badge low">LOW</span></td>
+              <td>0.00</td>
+            </tr>
+            
+            <tr>
+              <td><strong>pf_picpaymais_contract_consumer</strong></td>
+              <td>adeilton.azevedo</td>
+              <td>GABRIEL LOPES CARDOSO</td>
+              <td>US$ 59.46</td>
+              <td>US$ 59.46</td>
+              <td>US$ 0.00</td>
+              <td>368</td>
+              <td>US$ 0.16</td>
+              <td>2</td>
+              <td>2026-03-18</td>
+              <td><span class="badge low">LOW</span></td>
+              <td>0.00</td>
+            </tr>
+            
+            <tr>
+              <td><strong>pf_piggy_consumer_segmentation</strong></td>
+              <td>luiz.lima</td>
+              <td>GABRIEL LOPES CARDOSO</td>
+              <td>US$ 54.50</td>
+              <td>US$ 54.50</td>
+              <td>US$ 0.00</td>
+              <td>129</td>
+              <td>US$ 0.42</td>
+              <td>3</td>
+              <td>2026-03-18</td>
+              <td><span class="badge low">LOW</span></td>
+              <td>0.00</td>
+            </tr>
+            
+            <tr>
+              <td><strong>wallet_inactivity_fee_eligibility_violations</strong></td>
+              <td>yasmin.costa</td>
+              <td>PIETRO BISELLI FERREIRA</td>
+              <td>US$ 51.10</td>
+              <td>US$ 51.10</td>
+              <td>US$ 0.00</td>
+              <td>37</td>
+              <td>US$ 1.38</td>
+              <td>3</td>
+              <td>2026-03-13</td>
+              <td><span class="badge low">LOW</span></td>
+              <td>0.00</td>
+            </tr>
+            
+            <tr>
+              <td><strong>sfpf_consumers_attributes</strong></td>
+              <td>henrique.ppereira</td>
+              <td>GABRIEL LOPES CARDOSO</td>
+              <td>US$ 46.79</td>
+              <td>US$ 46.51</td>
+              <td>US$ 0.28</td>
+              <td>206</td>
+              <td>US$ 0.23</td>
+              <td>2</td>
+              <td>2026-03-17</td>
+              <td><span class="badge low">LOW</span></td>
+              <td>0.00</td>
+            </tr>
+            
+            <tr>
+              <td><strong>pf_bills_event_tracking_screen_home_bills</strong></td>
+              <td>bruno.bastos</td>
+              <td>GABRIEL LOPES CARDOSO</td>
+              <td>US$ 45.08</td>
+              <td>US$ 43.09</td>
+              <td>US$ 1.98</td>
+              <td>172</td>
+              <td>US$ 0.26</td>
+              <td>2</td>
+              <td>2026-03-18</td>
+              <td><span class="badge low">LOW</span></td>
+              <td>0.00</td>
+            </tr>
+            
+            <tr>
+              <td><strong>pf_cashback_payments</strong></td>
+              <td>adeilton.azevedo</td>
+              <td>GABRIEL LOPES CARDOSO</td>
+              <td>US$ 42.46</td>
+              <td>US$ 42.28</td>
+              <td>US$ 0.18</td>
+              <td>346</td>
+              <td>US$ 0.12</td>
+              <td>2</td>
+              <td>2026-03-17</td>
+              <td><span class="badge low">LOW</span></td>
+              <td>0.00</td>
+            </tr>
+            
+            <tr>
+              <td><strong>pf_all_cashback_funnel</strong></td>
+              <td>adeilton.azevedo</td>
+              <td>GABRIEL LOPES CARDOSO</td>
+              <td>US$ 40.77</td>
+              <td>US$ 40.53</td>
+              <td>US$ 0.24</td>
+              <td>445</td>
+              <td>US$ 0.09</td>
+              <td>2</td>
+              <td>2026-03-18</td>
+              <td><span class="badge low">LOW</span></td>
+              <td>0.00</td>
+            </tr>
+            
+            <tr>
+              <td><strong>new_user_limit_game_10_days</strong></td>
+              <td>fernanda.leite</td>
+              <td>HENRIQUE LOREA LEITE</td>
+              <td>US$ 40.14</td>
+              <td>US$ 40.14</td>
+              <td>US$ 0.00</td>
+              <td>12</td>
+              <td>US$ 3.35</td>
+              <td>3</td>
+              <td>2026-03-10</td>
+              <td><span class="badge low">LOW</span></td>
+              <td>0.00</td>
+            </tr>
+            
+            <tr>
+              <td><strong>segments_margins</strong></td>
+              <td>michel.morandini</td>
+              <td>MANOELA BRIENZA SOBRAL</td>
+              <td>US$ 39.93</td>
+              <td>US$ 30.93</td>
+              <td>US$ 9.01</td>
+              <td>18</td>
+              <td>US$ 2.22</td>
+              <td>2</td>
+              <td>2026-03-18</td>
+              <td><span class="badge low">LOW</span></td>
+              <td>0.00</td>
+            </tr>
+            
+            <tr>
+              <td><strong>pp_users_identified_accounts_opf_communication</strong></td>
+              <td>victor.ssantos</td>
+              <td>PIETRO BISELLI FERREIRA</td>
+              <td>US$ 39.18</td>
+              <td>US$ 37.66</td>
+              <td>US$ 1.52</td>
+              <td>241</td>
+              <td>US$ 0.16</td>
+              <td>2</td>
+              <td>2026-03-18</td>
+              <td><span class="badge low">LOW</span></td>
+              <td>0.00</td>
+            </tr>
+            
+            <tr>
+              <td><strong>pf_growth_campaigns_bias</strong></td>
+              <td>higor.jesus</td>
+              <td>DIEGO FERREIRA ADORNO</td>
+              <td>US$ 34.99</td>
+              <td>US$ 34.99</td>
+              <td>US$ 0.00</td>
+              <td>270</td>
+              <td>US$ 0.13</td>
+              <td>2</td>
+              <td>2026-03-18</td>
+              <td><span class="badge low">LOW</span></td>
+              <td>0.00</td>
+            </tr>
+            
+            <tr>
+              <td><strong>pf_pix_transactions_net_approval</strong></td>
+              <td>bruno.bastos</td>
+              <td>GABRIEL LOPES CARDOSO</td>
+              <td>US$ 34.40</td>
+              <td>US$ 26.29</td>
+              <td>US$ 8.11</td>
+              <td>67</td>
+              <td>US$ 0.51</td>
+              <td>2</td>
+              <td>2026-03-18</td>
+              <td><span class="badge low">LOW</span></td>
+              <td>0.00</td>
+            </tr>
+            
+            <tr>
+              <td><strong>new_user_limit_game_10_to_30_days</strong></td>
+              <td>fernanda.leite</td>
+              <td>HENRIQUE LOREA LEITE</td>
+              <td>US$ 33.22</td>
+              <td>US$ 33.22</td>
+              <td>US$ 0.00</td>
+              <td>14</td>
+              <td>US$ 2.37</td>
+              <td>3</td>
+              <td>2026-03-10</td>
+              <td><span class="badge low">LOW</span></td>
+              <td>0.00</td>
+            </tr>
+            
+            <tr>
+              <td><strong>pf_consumers_daily_wallets_picpaymais_payments</strong></td>
+              <td>adeilton.azevedo</td>
+              <td>GABRIEL LOPES CARDOSO</td>
+              <td>US$ 32.69</td>
+              <td>US$ 32.28</td>
+              <td>US$ 0.41</td>
+              <td>14</td>
+              <td>US$ 2.33</td>
+              <td>2</td>
+              <td>2026-03-13</td>
+              <td><span class="badge low">LOW</span></td>
+              <td>0.00</td>
+            </tr>
+            
+            <tr>
+              <td><strong>pf_scrapes_account</strong></td>
+              <td>adeilton.azevedo</td>
+              <td>GABRIEL LOPES CARDOSO</td>
+              <td>US$ 31.47</td>
+              <td>US$ 31.47</td>
+              <td>US$ 0.01</td>
+              <td>89</td>
+              <td>US$ 0.35</td>
+              <td>3</td>
+              <td>2026-03-16</td>
+              <td><span class="badge low">LOW</span></td>
+              <td>0.00</td>
+            </tr>
+            
+            <tr>
+              <td><strong>premium_benefit_entitlement_events_storyline</strong></td>
+              <td>adeilton.azevedo</td>
+              <td>GABRIEL LOPES CARDOSO</td>
+              <td>US$ 30.00</td>
+              <td>US$ 29.71</td>
+              <td>US$ 0.29</td>
+              <td>687</td>
+              <td>US$ 0.04</td>
+              <td>2</td>
+              <td>2026-03-18</td>
+              <td><span class="badge low">LOW</span></td>
+              <td>0.00</td>
+            </tr>
+            
+            <tr>
+              <td><strong>pf_benchmarking_fees</strong></td>
+              <td>nicole.carrillo</td>
+              <td>DIEGO FERREIRA ADORNO</td>
+              <td>US$ 29.08</td>
+              <td>US$ 29.05</td>
+              <td>US$ 0.03</td>
+              <td>56</td>
+              <td>US$ 0.52</td>
+              <td>4</td>
+              <td>2026-03-18</td>
+              <td><span class="badge low">LOW</span></td>
+              <td>0.00</td>
+            </tr>
+            
+            <tr>
+              <td><strong>pf_consumers_repasse</strong></td>
+              <td>adeilton.azevedo</td>
+              <td>GABRIEL LOPES CARDOSO</td>
+              <td>US$ 28.66</td>
+              <td>US$ 28.65</td>
+              <td>US$ 0.01</td>
+              <td>148</td>
+              <td>US$ 0.19</td>
+              <td>2</td>
+              <td>2026-03-11</td>
+              <td><span class="badge low">LOW</span></td>
+              <td>0.00</td>
+            </tr>
+            
+            <tr>
+              <td><strong>app_version_release</strong></td>
+              <td>fernanda.leite</td>
+              <td>HENRIQUE LOREA LEITE</td>
+              <td>US$ 27.99</td>
+              <td>US$ 27.99</td>
+              <td>US$ 0.00</td>
+              <td>12</td>
+              <td>US$ 2.33</td>
+              <td>2</td>
+              <td>2026-03-17</td>
+              <td><span class="badge low">LOW</span></td>
+              <td>0.00</td>
+            </tr>
+            
+            <tr>
+              <td><strong>home_four_rollout</strong></td>
+              <td>fernanda.leite</td>
+              <td>HENRIQUE LOREA LEITE</td>
+              <td>US$ 27.53</td>
+              <td>US$ 26.89</td>
+              <td>US$ 0.65</td>
+              <td>20</td>
+              <td>US$ 1.38</td>
+              <td>3</td>
+              <td>2026-03-10</td>
+              <td><span class="badge low">LOW</span></td>
+              <td>0.00</td>
+            </tr>
+            
+            <tr>
+              <td><strong>wallet_pf_cube_consumers_daily_metrics</strong></td>
+              <td>adeilton.azevedo</td>
+              <td>GABRIEL LOPES CARDOSO</td>
+              <td>US$ 26.38</td>
+              <td>US$ 26.38</td>
+              <td>US$ 0.00</td>
+              <td>237</td>
+              <td>US$ 0.11</td>
+              <td>2</td>
+              <td>2026-03-18</td>
+              <td><span class="badge low">LOW</span></td>
+              <td>0.00</td>
+            </tr>
+            
+            <tr>
+              <td><strong>bills_consumer_stages</strong></td>
+              <td>bruno.bastos</td>
+              <td>GABRIEL LOPES CARDOSO</td>
+              <td>US$ 22.12</td>
+              <td>US$ 19.58</td>
+              <td>US$ 2.54</td>
+              <td>9</td>
+              <td>US$ 2.46</td>
+              <td>3</td>
+              <td>2026-03-11</td>
+              <td><span class="badge low">LOW</span></td>
+              <td>0.00</td>
+            </tr>
+            
+            <tr>
+              <td><strong>sfpf_consumers_portability_salary_segmentation</strong></td>
+              <td>ramon.almeida</td>
+              <td>GABRIEL LOPES CARDOSO</td>
+              <td>US$ 21.82</td>
+              <td>US$ 21.82</td>
+              <td>US$ 0.00</td>
+              <td>27</td>
+              <td>US$ 0.81</td>
+              <td>3</td>
+              <td>2026-03-18</td>
+              <td><span class="badge low">LOW</span></td>
+              <td>0.00</td>
+            </tr>
+            
+            <tr>
+              <td><strong>picpay_pix_performance</strong></td>
+              <td>luis.pereira</td>
+              <td>DIEGO FERREIRA ADORNO</td>
+              <td>US$ 21.54</td>
+              <td>US$ 21.54</td>
+              <td>US$ 0.00</td>
+              <td>19</td>
+              <td>US$ 1.13</td>
+              <td>4</td>
+              <td>2026-03-17</td>
+              <td><span class="badge low">LOW</span></td>
+              <td>0.00</td>
+            </tr>
+            
+            <tr>
+              <td><strong>sfpf_consumers_book_consumers</strong></td>
+              <td>adeilton.azevedo</td>
+              <td>GABRIEL LOPES CARDOSO</td>
+              <td>US$ 21.27</td>
+              <td>US$ 7.13</td>
+              <td>US$ 14.14</td>
+              <td>235</td>
+              <td>US$ 0.09</td>
+              <td>2</td>
+              <td>2026-03-18</td>
+              <td><span class="badge low">LOW</span></td>
+              <td>0.00</td>
+            </tr>
+            
+            <tr>
+              <td><strong>pf_underage_margin_metrics_after_birthday</strong></td>
+              <td>bruno.bastos</td>
+              <td>GABRIEL LOPES CARDOSO</td>
+              <td>US$ 19.12</td>
+              <td>US$ 19.12</td>
+              <td>US$ 0.00</td>
+              <td>120</td>
+              <td>US$ 0.16</td>
+              <td>2</td>
+              <td>2026-03-17</td>
+              <td><span class="badge low">LOW</span></td>
+              <td>0.00</td>
+            </tr>
+            
+            <tr>
+              <td><strong>picpay_plus_click_engagement_segment</strong></td>
+              <td>henrique.ppereira</td>
+              <td>GABRIEL LOPES CARDOSO</td>
+              <td>US$ 16.70</td>
+              <td>US$ 16.70</td>
+              <td>US$ 0.00</td>
+              <td>7</td>
+              <td>US$ 2.39</td>
+              <td>3</td>
+              <td>2026-03-11</td>
+              <td><span class="badge low">LOW</span></td>
+              <td>0.00</td>
+            </tr>
+            
+            <tr>
+              <td><strong>web_crm_ipva26_consumers</strong></td>
+              <td>felipe.silveira</td>
+              <td>GABRIEL LOPES CARDOSO</td>
+              <td>US$ 15.78</td>
+              <td>US$ 15.78</td>
+              <td>US$ 0.00</td>
+              <td>16</td>
+              <td>US$ 0.99</td>
+              <td>2</td>
+              <td>2026-03-11</td>
+              <td><span class="badge low">LOW</span></td>
+              <td>0.00</td>
+            </tr>
+            
+            <tr>
+              <td><strong>pf_picpaymais_dda_transactions</strong></td>
+              <td>adeilton.azevedo</td>
+              <td>GABRIEL LOPES CARDOSO</td>
+              <td>US$ 15.77</td>
+              <td>US$ 11.97</td>
+              <td>US$ 3.80</td>
+              <td>31</td>
+              <td>US$ 0.51</td>
+              <td>2</td>
+              <td>2026-03-11</td>
+              <td><span class="badge low">LOW</span></td>
+              <td>0.00</td>
+            </tr>
+            
+            <tr>
+              <td><strong>pf_historical_billing_fees</strong></td>
+              <td>gabriel.pires</td>
+              <td>DIEGO FERREIRA ADORNO</td>
+              <td>US$ 15.14</td>
+              <td>US$ 7.61</td>
+              <td>US$ 7.54</td>
+              <td>16</td>
+              <td>US$ 0.95</td>
+              <td>2</td>
+              <td>2026-03-10</td>
+              <td><span class="badge low">LOW</span></td>
+              <td>0.00</td>
+            </tr>
+            
+            <tr>
+              <td><strong>pf_user_cards_wallet</strong></td>
+              <td>bruno.bastos</td>
+              <td>GABRIEL LOPES CARDOSO</td>
+              <td>US$ 14.27</td>
+              <td>US$ 14.13</td>
+              <td>US$ 0.14</td>
+              <td>13</td>
+              <td>US$ 1.10</td>
+              <td>2</td>
+              <td>2026-03-11</td>
+              <td><span class="badge low">LOW</span></td>
+              <td>1.05</td>
+            </tr>
+            
+            <tr>
+              <td><strong>salary_portability_events</strong></td>
+              <td>yasmin.costa</td>
+              <td>PIETRO BISELLI FERREIRA</td>
+              <td>US$ 13.56</td>
+              <td>US$ 13.56</td>
+              <td>US$ 0.00</td>
+              <td>403</td>
+              <td>US$ 0.03</td>
+              <td>2</td>
+              <td>2026-03-18</td>
+              <td><span class="badge low">LOW</span></td>
+              <td>0.00</td>
+            </tr>
+            
+            <tr>
+              <td><strong>pf_vehicular_debts_payments_details</strong></td>
+              <td>bruno.bastos</td>
+              <td>GABRIEL LOPES CARDOSO</td>
+              <td>US$ 12.69</td>
+              <td>US$ 12.58</td>
+              <td>US$ 0.11</td>
+              <td>299</td>
+              <td>US$ 0.04</td>
+              <td>2</td>
+              <td>2026-03-18</td>
+              <td><span class="badge low">LOW</span></td>
+              <td>0.00</td>
+            </tr>
+            
+            <tr>
+              <td><strong>wallet_pf_cube_daily_metrics</strong></td>
+              <td>adeilton.azevedo</td>
+              <td>GABRIEL LOPES CARDOSO</td>
+              <td>US$ 11.93</td>
+              <td>US$ 11.93</td>
+              <td>US$ 0.00</td>
+              <td>374</td>
+              <td>US$ 0.03</td>
+              <td>2</td>
+              <td>2026-03-18</td>
+              <td><span class="badge low">LOW</span></td>
+              <td>0.00</td>
+            </tr>
+            
+            <tr>
+              <td><strong>invest_fixed_income_revenue</strong></td>
+              <td>luiz.pupo</td>
+              <td>PIETRO BISELLI FERREIRA</td>
+              <td>US$ 11.83</td>
+              <td>US$ 11.83</td>
+              <td>US$ 0.00</td>
+              <td>8</td>
+              <td>US$ 1.48</td>
+              <td>3</td>
+              <td>2026-03-11</td>
+              <td><span class="badge low">LOW</span></td>
+              <td>0.00</td>
+            </tr>
+            
+            <tr>
+              <td><strong>pf_banking_withdraws_cashout</strong></td>
+              <td>bruno.bastos</td>
+              <td>GABRIEL LOPES CARDOSO</td>
+              <td>US$ 11.76</td>
+              <td>US$ 11.47</td>
+              <td>US$ 0.30</td>
+              <td>35</td>
+              <td>US$ 0.34</td>
+              <td>2</td>
+              <td>2026-03-11</td>
+              <td><span class="badge low">LOW</span></td>
+              <td>0.00</td>
+            </tr>
+            
+            <tr>
+              <td><strong>pf_bills_transactions_waterfall</strong></td>
+              <td>adeilton.azevedo</td>
+              <td>GABRIEL LOPES CARDOSO</td>
+              <td>US$ 11.24</td>
+              <td>US$ 11.17</td>
+              <td>US$ 0.08</td>
+              <td>10</td>
+              <td>US$ 1.12</td>
+              <td>2</td>
+              <td>2026-03-11</td>
+              <td><span class="badge low">LOW</span></td>
+              <td>0.00</td>
+            </tr>
+            
+            <tr>
+              <td><strong>pf_subscriptions_picpay_plus_revenue</strong></td>
+              <td>bruno.bastos</td>
+              <td>GABRIEL LOPES CARDOSO</td>
+              <td>US$ 10.88</td>
+              <td>US$ 10.88</td>
+              <td>US$ 0.00</td>
+              <td>134</td>
+              <td>US$ 0.08</td>
+              <td>3</td>
+              <td>2026-03-18</td>
+              <td><span class="badge low">LOW</span></td>
+              <td>0.00</td>
+            </tr>
+            
+            <tr>
+              <td><strong>pf_subscription_storyline</strong></td>
+              <td>adeilton.azevedo</td>
+              <td>GABRIEL LOPES CARDOSO</td>
+              <td>US$ 10.74</td>
+              <td>US$ 6.66</td>
+              <td>US$ 4.08</td>
+              <td>649</td>
+              <td>US$ 0.02</td>
+              <td>2</td>
+              <td>2026-03-18</td>
+              <td><span class="badge low">LOW</span></td>
+              <td>0.00</td>
+            </tr>
+            
+            <tr>
+              <td><strong>underage_manager_consent</strong></td>
+              <td>adeilton.azevedo</td>
+              <td>GABRIEL LOPES CARDOSO</td>
+              <td>US$ 10.48</td>
+              <td>US$ 10.43</td>
+              <td>US$ 0.05</td>
+              <td>462</td>
+              <td>US$ 0.02</td>
+              <td>2</td>
+              <td>2026-03-18</td>
+              <td><span class="badge low">LOW</span></td>
+              <td>0.00</td>
+            </tr>
+            
+            <tr>
+              <td><strong>pf_subscriptions_picpay_plus_indicators</strong></td>
+              <td>bruno.bastos</td>
+              <td>GABRIEL LOPES CARDOSO</td>
+              <td>US$ 9.52</td>
+              <td>US$ 9.29</td>
+              <td>US$ 0.22</td>
+              <td>988</td>
+              <td>US$ 0.01</td>
+              <td>2</td>
+              <td>2026-03-18</td>
+              <td><span class="badge low">LOW</span></td>
+              <td>0.00</td>
+            </tr>
+            
+            <tr>
+              <td><strong>pj_commercial_receivables</strong></td>
+              <td>nicole.carrillo</td>
+              <td>DIEGO FERREIRA ADORNO</td>
+              <td>US$ 8.02</td>
+              <td>US$ 7.99</td>
+              <td>US$ 0.03</td>
+              <td>7</td>
+              <td>US$ 1.15</td>
+              <td>3</td>
+              <td>2026-03-10</td>
+              <td><span class="badge low">LOW</span></td>
+              <td>0.00</td>
+            </tr>
+            
+            <tr>
+              <td><strong>pf_bills_transactions_net_approval</strong></td>
+              <td>bruno.bastos</td>
+              <td>GABRIEL LOPES CARDOSO</td>
+              <td>US$ 7.87</td>
+              <td>US$ 7.40</td>
+              <td>US$ 0.47</td>
+              <td>55</td>
+              <td>US$ 0.14</td>
+              <td>2</td>
+              <td>2026-03-18</td>
+              <td><span class="badge low">LOW</span></td>
+              <td>0.00</td>
+            </tr>
+            
+            <tr>
+              <td><strong>wallet_pf_okrs_cashout</strong></td>
+              <td>luiz.lima</td>
+              <td>GABRIEL LOPES CARDOSO</td>
+              <td>US$ 7.66</td>
+              <td>US$ 7.66</td>
+              <td>US$ 0.00</td>
+              <td>28</td>
+              <td>US$ 0.27</td>
+              <td>2</td>
+              <td>2026-03-11</td>
+              <td><span class="badge low">LOW</span></td>
+              <td>0.00</td>
+            </tr>
+            
+            <tr>
+              <td><strong>base_of_growth_leverage</strong></td>
+              <td>anny.aguiar</td>
+              <td>PIETRO BISELLI FERREIRA</td>
+              <td>US$ 7.45</td>
+              <td>US$ 7.45</td>
+              <td>US$ 0.00</td>
+              <td>0</td>
+              <td>—</td>
+              <td>3</td>
+              <td>—</td>
+              <td><span class="badge critical">CRITICAL</span></td>
+              <td>0.00</td>
+            </tr>
+            
+            <tr>
+              <td><strong>pf_crm_public_gamified_accelerator</strong></td>
+              <td>felipe.silveira</td>
+              <td>GABRIEL LOPES CARDOSO</td>
+              <td>US$ 6.74</td>
+              <td>US$ 6.71</td>
+              <td>US$ 0.03</td>
+              <td>31</td>
+              <td>US$ 0.22</td>
+              <td>3</td>
+              <td>2026-03-11</td>
+              <td><span class="badge low">LOW</span></td>
+              <td>0.23</td>
+            </tr>
+            
+            <tr>
+              <td><strong>sfpf_consumers_ipva_unique_calendar_released</strong></td>
+              <td>adeilton.azevedo</td>
+              <td>GABRIEL LOPES CARDOSO</td>
+              <td>US$ 6.69</td>
+              <td>US$ 6.62</td>
+              <td>US$ 0.07</td>
+              <td>20</td>
+              <td>US$ 0.33</td>
+              <td>2</td>
+              <td>2026-03-11</td>
+              <td><span class="badge low">LOW</span></td>
+              <td>0.00</td>
+            </tr>
+            
+            <tr>
+              <td><strong>sfpf_consumers_ipva_installments</strong></td>
+              <td>adeilton.azevedo</td>
+              <td>GABRIEL LOPES CARDOSO</td>
+              <td>US$ 6.12</td>
+              <td>US$ 6.12</td>
+              <td>US$ 0.00</td>
+              <td>20</td>
+              <td>US$ 0.31</td>
+              <td>2</td>
+              <td>2026-03-11</td>
+              <td><span class="badge low">LOW</span></td>
+              <td>0.00</td>
+            </tr>
+            
+            <tr>
+              <td><strong>pf_picpaymais_withdraw</strong></td>
+              <td>adeilton.azevedo</td>
+              <td>GABRIEL LOPES CARDOSO</td>
+              <td>US$ 5.35</td>
+              <td>US$ 5.35</td>
+              <td>US$ 0.01</td>
+              <td>30</td>
+              <td>US$ 0.18</td>
+              <td>2</td>
+              <td>2026-03-11</td>
+              <td><span class="badge low">LOW</span></td>
+              <td>0.00</td>
+            </tr>
+            
+            <tr>
+              <td><strong>pf_vehicular_debts_debts_details</strong></td>
+              <td>bruno.bastos</td>
+              <td>GABRIEL LOPES CARDOSO</td>
+              <td>US$ 4.73</td>
+              <td>US$ 3.40</td>
+              <td>US$ 1.33</td>
+              <td>346</td>
+              <td>US$ 0.01</td>
+              <td>2</td>
+              <td>2026-03-18</td>
+              <td><span class="badge low">LOW</span></td>
+              <td>0.00</td>
+            </tr>
+            
+            <tr>
+              <td><strong>open_finance_kpi</strong></td>
+              <td>anny.aguiar</td>
+              <td>PIETRO BISELLI FERREIRA</td>
+              <td>US$ 4.02</td>
+              <td>US$ 4.02</td>
+              <td>US$ 0.00</td>
+              <td>3</td>
+              <td>US$ 1.34</td>
+              <td>3</td>
+              <td>2026-03-18</td>
+              <td><span class="badge low">LOW</span></td>
+              <td>0.00</td>
+            </tr>
+            
+            <tr>
+              <td><strong>houston_audiences_count_daily</strong></td>
+              <td>hamanda.cavalheri</td>
+              <td>HENRIQUE LOREA LEITE</td>
+              <td>US$ 3.69</td>
+              <td>US$ 3.68</td>
+              <td>US$ 0.00</td>
+              <td>39</td>
+              <td>US$ 0.09</td>
+              <td>2</td>
+              <td>2026-03-18</td>
+              <td><span class="badge low">LOW</span></td>
+              <td>0.00</td>
+            </tr>
+            
+            <tr>
+              <td><strong>sfpf_consumers_behavior_insurance_products</strong></td>
+              <td>luiz.pupo</td>
+              <td>PIETRO BISELLI FERREIRA</td>
+              <td>US$ 3.64</td>
+              <td>US$ 3.56</td>
+              <td>US$ 0.08</td>
+              <td>110</td>
+              <td>US$ 0.03</td>
+              <td>4</td>
+              <td>2026-03-18</td>
+              <td><span class="badge low">LOW</span></td>
+              <td>0.00</td>
+            </tr>
+            
+            <tr>
+              <td><strong>pf_vehicular_debts_users_vehicle</strong></td>
+              <td>bruno.bastos</td>
+              <td>GABRIEL LOPES CARDOSO</td>
+              <td>US$ 3.60</td>
+              <td>US$ 3.47</td>
+              <td>US$ 0.14</td>
+              <td>29</td>
+              <td>US$ 0.12</td>
+              <td>2</td>
+              <td>2026-03-11</td>
+              <td><span class="badge low">LOW</span></td>
+              <td>0.00</td>
+            </tr>
+            
+            <tr>
+              <td><strong>monthly_wallets_costs</strong></td>
+              <td>yasmin.costa</td>
+              <td>PIETRO BISELLI FERREIRA</td>
+              <td>US$ 3.45</td>
+              <td>US$ 3.45</td>
+              <td>US$ 0.00</td>
+              <td>91</td>
+              <td>US$ 0.04</td>
+              <td>2</td>
+              <td>2026-03-18</td>
+              <td><span class="badge low">LOW</span></td>
+              <td>0.00</td>
+            </tr>
+            
+            <tr>
+              <td><strong>pf_bills_dda_propensity</strong></td>
+              <td>bruno.bastos</td>
+              <td>GABRIEL LOPES CARDOSO</td>
+              <td>US$ 3.30</td>
+              <td>US$ 0.99</td>
+              <td>US$ 2.31</td>
+              <td>126</td>
+              <td>US$ 0.03</td>
+              <td>2</td>
+              <td>2026-03-18</td>
+              <td><span class="badge low">LOW</span></td>
+              <td>14.43</td>
+            </tr>
+            
+            <tr>
+              <td><strong>pf_vehicular_debts_licensing_details</strong></td>
+              <td>bruno.bastos</td>
+              <td>GABRIEL LOPES CARDOSO</td>
+              <td>US$ 3.23</td>
+              <td>US$ 3.14</td>
+              <td>US$ 0.08</td>
+              <td>23</td>
+              <td>US$ 0.14</td>
+              <td>3</td>
+              <td>2026-03-17</td>
+              <td><span class="badge low">LOW</span></td>
+              <td>0.00</td>
+            </tr>
+            
+            <tr>
+              <td><strong>web_crm_ipva26_daily_sends</strong></td>
+              <td>higor.jesus</td>
+              <td>DIEGO FERREIRA ADORNO</td>
+              <td>US$ 3.19</td>
+              <td>US$ 3.19</td>
+              <td>US$ 0.00</td>
+              <td>150</td>
+              <td>US$ 0.02</td>
+              <td>2</td>
+              <td>2026-03-18</td>
+              <td><span class="badge low">LOW</span></td>
+              <td>0.00</td>
+            </tr>
+            
+            <tr>
+              <td><strong>sfpf_consumers_vehicular_debts</strong></td>
+              <td>adeilton.azevedo</td>
+              <td>GABRIEL LOPES CARDOSO</td>
+              <td>US$ 2.64</td>
+              <td>US$ 2.45</td>
+              <td>US$ 0.20</td>
+              <td>38</td>
+              <td>US$ 0.07</td>
+              <td>3</td>
+              <td>2026-03-15</td>
+              <td><span class="badge low">LOW</span></td>
+              <td>0.00</td>
+            </tr>
+            
+            <tr>
+              <td><strong>sfpf_consumers_report_picpay_plus</strong></td>
+              <td>adeilton.azevedo</td>
+              <td>GABRIEL LOPES CARDOSO</td>
+              <td>US$ 2.44</td>
+              <td>US$ 2.44</td>
+              <td>US$ 0.00</td>
+              <td>111</td>
+              <td>US$ 0.02</td>
+              <td>2</td>
+              <td>2026-03-17</td>
+              <td><span class="badge low">LOW</span></td>
+              <td>0.00</td>
+            </tr>
+            
+            <tr>
+              <td><strong>base_receita_custo</strong></td>
+              <td>drielle.taccola</td>
+              <td>PIETRO BISELLI FERREIRA</td>
+              <td>US$ 2.22</td>
+              <td>US$ 2.22</td>
+              <td>US$ 0.00</td>
+              <td>75</td>
+              <td>US$ 0.03</td>
+              <td>3</td>
+              <td>2026-03-18</td>
+              <td><span class="badge low">LOW</span></td>
+              <td>0.00</td>
+            </tr>
+            
+            <tr>
+              <td><strong>pj_commercial_quotation_open</strong></td>
+              <td>nicole.carrillo</td>
+              <td>DIEGO FERREIRA ADORNO</td>
+              <td>US$ 2.18</td>
+              <td>US$ 2.18</td>
+              <td>US$ 0.00</td>
+              <td>176</td>
+              <td>US$ 0.01</td>
+              <td>3</td>
+              <td>2026-03-18</td>
+              <td><span class="badge low">LOW</span></td>
+              <td>0.00</td>
+            </tr>
+            
+            <tr>
+              <td><strong>sfpf_consumers_ipva_activation</strong></td>
+              <td>adeilton.azevedo</td>
+              <td>GABRIEL LOPES CARDOSO</td>
+              <td>US$ 1.73</td>
+              <td>US$ 1.73</td>
+              <td>US$ 0.00</td>
+              <td>20</td>
+              <td>US$ 0.09</td>
+              <td>2</td>
+              <td>2026-03-11</td>
+              <td><span class="badge low">LOW</span></td>
+              <td>0.01</td>
+            </tr>
+            
+            <tr>
+              <td><strong>sfpf_consumers_behavior_personal_credit_products</strong></td>
+              <td>luiz.pupo</td>
+              <td>PIETRO BISELLI FERREIRA</td>
+              <td>US$ 1.73</td>
+              <td>US$ 1.67</td>
+              <td>US$ 0.06</td>
+              <td>40</td>
+              <td>US$ 0.04</td>
+              <td>2</td>
+              <td>2026-03-16</td>
+              <td><span class="badge low">LOW</span></td>
+              <td>0.00</td>
+            </tr>
+            
+            <tr>
+              <td><strong>sfpf_consumers_behavior_ppcard_products</strong></td>
+              <td>luiz.pupo</td>
+              <td>PIETRO BISELLI FERREIRA</td>
+              <td>US$ 1.64</td>
+              <td>US$ 1.59</td>
+              <td>US$ 0.06</td>
+              <td>33</td>
+              <td>US$ 0.05</td>
+              <td>4</td>
+              <td>2026-03-17</td>
+              <td><span class="badge low">LOW</span></td>
+              <td>0.00</td>
+            </tr>
+            
+            <tr>
+              <td><strong>sfpf_consumers_behavior_pix_products</strong></td>
+              <td>luiz.pupo</td>
+              <td>PIETRO BISELLI FERREIRA</td>
+              <td>US$ 1.63</td>
+              <td>US$ 1.54</td>
+              <td>US$ 0.09</td>
+              <td>20</td>
+              <td>US$ 0.08</td>
+              <td>2</td>
+              <td>2026-03-18</td>
+              <td><span class="badge low">LOW</span></td>
+              <td>0.00</td>
+            </tr>
+            
+            <tr>
+              <td><strong>sfpf_campaigns_pricing_cashback</strong></td>
+              <td>nicole.carrillo</td>
+              <td>DIEGO FERREIRA ADORNO</td>
+              <td>US$ 1.39</td>
+              <td>US$ 1.38</td>
+              <td>US$ 0.00</td>
+              <td>52</td>
+              <td>US$ 0.03</td>
+              <td>2</td>
+              <td>2026-03-18</td>
+              <td><span class="badge low">LOW</span></td>
+              <td>0.00</td>
+            </tr>
+            
+            <tr>
+              <td><strong>sfpf_consumers_piggy_bank_report</strong></td>
+              <td>adeilton.azevedo</td>
+              <td>GABRIEL LOPES CARDOSO</td>
+              <td>US$ 1.34</td>
+              <td>US$ 1.33</td>
+              <td>US$ 0.02</td>
+              <td>35</td>
+              <td>US$ 0.04</td>
+              <td>2</td>
+              <td>2026-03-16</td>
+              <td><span class="badge low">LOW</span></td>
+              <td>0.00</td>
+            </tr>
+            
+            <tr>
+              <td><strong>sfpf_consumers_behavior_banking_products</strong></td>
+              <td>luiz.pupo</td>
+              <td>PIETRO BISELLI FERREIRA</td>
+              <td>US$ 1.24</td>
+              <td>US$ 1.23</td>
+              <td>US$ 0.01</td>
+              <td>16</td>
+              <td>US$ 0.08</td>
+              <td>2</td>
+              <td>2026-03-18</td>
+              <td><span class="badge low">LOW</span></td>
+              <td>0.00</td>
+            </tr>
+            
+            <tr>
+              <td><strong>sfpf_consumers_vehicle_licensing</strong></td>
+              <td>adeilton.azevedo</td>
+              <td>GABRIEL LOPES CARDOSO</td>
+              <td>US$ 1.21</td>
+              <td>US$ 1.20</td>
+              <td>US$ 0.01</td>
+              <td>20</td>
+              <td>US$ 0.06</td>
+              <td>2</td>
+              <td>2026-03-11</td>
+              <td><span class="badge low">LOW</span></td>
+              <td>0.07</td>
+            </tr>
+            
+            <tr>
+              <td><strong>pf_subscriptions_picpay_plus_amazon_prime</strong></td>
+              <td>bruno.bastos</td>
+              <td>GABRIEL LOPES CARDOSO</td>
+              <td>US$ 1.08</td>
+              <td>US$ 1.06</td>
+              <td>US$ 0.02</td>
+              <td>653</td>
+              <td>US$ 0.00</td>
+              <td>2</td>
+              <td>2026-03-18</td>
+              <td><span class="badge low">LOW</span></td>
+              <td>0.00</td>
+            </tr>
+            
+            <tr>
+              <td><strong>pf_underage_responsible_metrics</strong></td>
+              <td>luiz.pupo</td>
+              <td>PIETRO BISELLI FERREIRA</td>
+              <td>US$ 0.98</td>
+              <td>US$ 0.00</td>
+              <td>US$ 0.98</td>
+              <td>1.168</td>
+              <td>US$ 0.00</td>
+              <td>2</td>
+              <td>2026-03-18</td>
+              <td><span class="badge low">LOW</span></td>
+              <td>0.00</td>
+            </tr>
+            
+            <tr>
+              <td><strong>sfpf_consumers_picpay_plus_analysis</strong></td>
+              <td>adeilton.azevedo</td>
+              <td>GABRIEL LOPES CARDOSO</td>
+              <td>US$ 0.63</td>
+              <td>US$ 0.47</td>
+              <td>US$ 0.16</td>
+              <td>51</td>
+              <td>US$ 0.01</td>
+              <td>2</td>
+              <td>2026-03-11</td>
+              <td><span class="badge low">LOW</span></td>
+              <td>0.00</td>
+            </tr>
+            
+            <tr>
+              <td><strong>pf_wallet_and_banking_dash_kpis</strong></td>
+              <td>bruno.bastos</td>
+              <td>GABRIEL LOPES CARDOSO</td>
+              <td>US$ 0.30</td>
+              <td>US$ 0.30</td>
+              <td>US$ 0.00</td>
+              <td>16</td>
+              <td>US$ 0.02</td>
+              <td>2</td>
+              <td>2026-03-18</td>
+              <td><span class="badge low">LOW</span></td>
+              <td>0.00</td>
+            </tr>
+            
+            <tr>
+              <td><strong>consumers_exclusive_group</strong></td>
+              <td>hamanda.cavalheri</td>
+              <td>HENRIQUE LOREA LEITE</td>
+              <td>US$ 0.14</td>
+              <td>US$ 0.14</td>
+              <td>US$ 0.00</td>
+              <td>2</td>
+              <td>US$ 0.07</td>
+              <td>3</td>
+              <td>2026-03-17</td>
+              <td><span class="badge low">LOW</span></td>
+              <td>0.00</td>
+            </tr>
+            
+            <tr>
+              <td><strong>pf_banking_salary_portabilities_life_cycle</strong></td>
+              <td>bruno.bastos</td>
+              <td>GABRIEL LOPES CARDOSO</td>
+              <td>US$ 0.06</td>
+              <td>US$ 0.00</td>
+              <td>US$ 0.06</td>
+              <td>570</td>
+              <td>US$ 0.00</td>
+              <td>2</td>
+              <td>2026-03-18</td>
+              <td><span class="badge low">LOW</span></td>
+              <td>0.00</td>
+            </tr>
+            
+            <tr>
+              <td><strong>sfpf_consumers_monthly_news</strong></td>
+              <td>adeilton.azevedo</td>
+              <td>GABRIEL LOPES CARDOSO</td>
+              <td>US$ 0.04</td>
+              <td>US$ 0.00</td>
+              <td>US$ 0.04</td>
+              <td>35</td>
+              <td>US$ 0.00</td>
+              <td>3</td>
+              <td>2026-03-16</td>
+              <td><span class="badge low">LOW</span></td>
+              <td>0.00</td>
+            </tr>
+            
+            <tr>
+              <td><strong>digital_wallet_treatment_control</strong></td>
+              <td>higor.jesus</td>
+              <td>DIEGO FERREIRA ADORNO</td>
+              <td>US$ 0.00</td>
+              <td>US$ 0.00</td>
+              <td>US$ 0.00</td>
+              <td>74</td>
+              <td>US$ 0.00</td>
+              <td>2</td>
+              <td>2026-03-18</td>
+              <td><span class="badge low">LOW</span></td>
+              <td>0.00</td>
+            </tr>
+            
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function switchTab(event, tabId) {
+      document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+      event.currentTarget.classList.add('active');
+      document.getElementById(tabId).classList.add('active');
+    }
+  </script>
 </body>
 </html>
