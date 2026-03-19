@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Custozin - Análise de Custos | Team Krempel</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            font-size: 32px;
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+        
+        .header .subtitle {
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .tab {
+            background: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .tab:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+        
+        .tab.active {
+            background: #667eea;
+            color: white;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .card {
+            background: white;
+            padding: 24px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .card-title {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .card-value {
+            font-size: 36px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 8px;
+        }
+        
+        .card-value.red {
+            color: #e53e3e;
+        }
+        
+        .card-value.green {
+            color: #38a169;
+        }
+        
+        .card-value.yellow {
+            color: #d69e2e;
+        }
+        
+        .card-subtitle {
+            font-size: 12px;
+            color: #999;
+        }
+        
+        .table-container {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            overflow-x: auto;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        th {
+            text-align: left;
+            padding: 12px;
+            background: #f7fafc;
+            font-size: 12px;
+            font-weight: 600;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+        
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #e2e8f0;
+            font-size: 14px;
+        }
+        
+        tr:hover {
+            background: #f7fafc;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        
+        .badge.critical {
+            background: #fed7d7;
+            color: #c53030;
+        }
+        
+        .badge.high {
+            background: #feebc8;
+            color: #c05621;
+        }
+        
+        .badge.medium {
+            background: #fef5e7;
+            color: #975a16;
+        }
+        
+        .badge.low {
+            background: #c6f6d5;
+            color: #22543d;
+        }
+        
+        .footer {
+            text-align: center;
+            color: white;
+            margin-top: 40px;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>💰 Custozin - Análise de Custos</h1>
+            <div class="subtitle">Team Krempel (~115 tabelas) | Atualizado em 2026-03-19 15:28:03</div>
+        </div>
+        
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('overview')">📊 Overview</button>
+            <button class="tab" onclick="switchTab('problems')">🚨 Problemas</button>
+            <button class="tab" onclick="switchTab('details')">📋 Detalhes</button>
+        </div>
+        
+        <!-- TAB: OVERVIEW -->
+        <div id="overview" class="tab-content active">
+            <div class="cards">
+                <div class="card">
+                    <div class="card-title">Total de Tabelas</div>
+                    <div class="card-value">115</div>
+                    <div class="card-subtitle">Team Krempel</div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-title">Custo Total (30d)</div>
+                    <div class="card-value">US$ 12,543.75</div>
+                    <div class="card-subtitle">Últimos 30 dias</div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-title">Tabelas sem Uso</div>
+                    <div class="card-value red">8</div>
+                    <div class="card-subtitle">US$ 342.50 desperdiçados</div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-title">Alto Custo / Baixo Uso</div>
+                    <div class="card-value yellow">12</div>
+                    <div class="card-subtitle">Candidatas a otimização</div>
+                </div>
+            </div>
+            
+            <div class="table-container">
+                <h3 style="margin-bottom: 20px;">💸 Top 10 Tabelas por Custo</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tabela</th>
+                            <th>Custo (30d)</th>
+                            <th>Uso (30d)</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        <tr>
+                            <td><strong>pf_monthly_transactions</strong></td>
+                            <td>US$ 1,234.56</td>
+                            <td>0 queries</td>
+                            <td><span class="badge critical">CRITICAL: Zero usage with cost</span></td>
+                        </tr>
+
+                        <tr>
+                            <td><strong>pf_daily_aggregates</strong></td>
+                            <td>US$ 987.32</td>
+                            <td>45 queries</td>
+                            <td><span class="badge high">HIGH: Expensive with low usage</span></td>
+                        </tr>
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <!-- TAB: PROBLEMS -->
+        <div id="problems" class="tab-content">
+            <div class="table-container">
+                <h3 style="margin-bottom: 20px;">🚨 Tabelas Problemáticas</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tabela</th>
+                            <th>Custo (30d)</th>
+                            <th>Uso (30d)</th>
+                            <th>Custo/Uso</th>
+                            <th>Severidade</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        <tr>
+                            <td><strong>pf_monthly_transactions</strong></td>
+                            <td>US$ 1,234.56</td>
+                            <td>0</td>
+                            <td>US$ 0.0000</td>
+                            <td><span class="badge critical">CRITICAL: Zero usage with cost</span></td>
+                        </tr>
+
+                        <tr>
+                            <td><strong>pf_daily_aggregates</strong></td>
+                            <td>US$ 987.32</td>
+                            <td>45</td>
+                            <td>US$ 21.9400</td>
+                            <td><span class="badge high">HIGH: Expensive with low usage</span></td>
+                        </tr>
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <!-- TAB: DETAILS -->
+        <div id="details" class="tab-content">
+            <div class="table-container">
+                <h3 style="margin-bottom: 20px;">📋 Todas as Tabelas</h3>
+                <p style="color: #666; margin-bottom: 20px;">Em desenvolvimento. Use as queries diretamente para análise detalhada.</p>
+            </div>
+        </div>
+        
+        <div class="footer">
+            🐺 Wolf | Custozin Skill | PicPay Self-Service Analytics
+        </div>
+    </div>
+    
+    <script>
+        function switchTab(tabName) {
+            // Remove active de todos
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            
+            // Adiciona active no clicado
+            event.target.classList.add('active');
+            document.getElementById(tabName).classList.add('active');
+        }
+    </script>
+</body>
+</html>
