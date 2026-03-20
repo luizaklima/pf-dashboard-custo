@@ -494,7 +494,7 @@
       margin-bottom: 6px;
     }
     .action-summary-value {
-      font-size: 20px;
+      font-size: 18px;
       font-weight: 700;
       line-height: 1.1;
     }
@@ -797,8 +797,21 @@
       return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(Number(value || 0));
     }
 
+    function formatCurrencyWhole(value) {
+      return new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD',
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
+      }).format(Number(value || 0));
+    }
+
     function formatNumber(value) {
       return new Intl.NumberFormat('pt-BR').format(Number(value || 0));
+    }
+
+    function formatPercentWhole(value) {
+      return `${Math.round(Number(value || 0))}%`;
     }
 
     function formatDate(value) {
@@ -1377,12 +1390,15 @@ Sem uso com custo: ${formatNumber(item.zero_usage_with_cost)}`;
         const totalSaving = items.reduce((sum, entry) => sum + (entry.issue.savings?.monthly_total_cost_saving || 0), 0);
         const processingSaving = items.reduce((sum, entry) => sum + (entry.issue.savings?.monthly_processing_cost_saving || 0), 0);
         const runtimeSaving = items.reduce((sum, entry) => sum + (entry.issue.savings?.monthly_runtime_hours_saving || 0), 0);
+        const currentCost = items.reduce((sum, entry) => sum + (entry.issue.savings?.current_total_monthly_cost || 0), 0);
         return {
           groupName,
           items,
           totalSaving,
           processingSaving,
           runtimeSaving,
+          currentCost,
+          savingPct: currentCost > 0 ? (totalSaving / currentCost) * 100 : 0,
         };
       });
       const aggregateSummary = groupSummaries.reduce((acc, item) => {
@@ -1390,8 +1406,10 @@ Sem uso com custo: ${formatNumber(item.zero_usage_with_cost)}`;
         acc.totalSaving += item.totalSaving;
         acc.processingSaving += item.processingSaving;
         acc.runtimeSaving += item.runtimeSaving;
+        acc.currentCost += item.currentCost;
         return acc;
-      }, { tables: 0, totalSaving: 0, processingSaving: 0, runtimeSaving: 0 });
+      }, { tables: 0, totalSaving: 0, processingSaving: 0, runtimeSaving: 0, currentCost: 0 });
+      aggregateSummary.savingPct = aggregateSummary.currentCost > 0 ? (aggregateSummary.totalSaving / aggregateSummary.currentCost) * 100 : 0;
       const summaryCards = [
         `
           <div class="action-summary-card is-total">
@@ -1400,39 +1418,39 @@ Sem uso com custo: ${formatNumber(item.zero_usage_with_cost)}`;
             <div class="action-summary-metrics">
               <div class="action-summary-metric">
                 <div class="action-summary-label">Economia total</div>
-                <div class="action-summary-value">${escapeHtml(formatCurrency(aggregateSummary.totalSaving))}/mês</div>
+                <div class="action-summary-value">${escapeHtml(formatCurrencyWhole(aggregateSummary.totalSaving))}/mês</div>
               </div>
               <div class="action-summary-metric">
                 <div class="action-summary-label">Economia proc.</div>
-                <div class="action-summary-value">${escapeHtml(formatCurrency(aggregateSummary.processingSaving))}/mês</div>
+                <div class="action-summary-value">${escapeHtml(formatCurrencyWhole(aggregateSummary.processingSaving))}/mês</div>
               </div>
               <div class="action-summary-metric">
-                <div class="action-summary-label">Tempo evitado</div>
-                <div class="action-summary-value">${escapeHtml(formatNumber(aggregateSummary.runtimeSaving))} h/mês</div>
+                <div class="action-summary-label">Economia estimada</div>
+                <div class="action-summary-value">${escapeHtml(formatPercentWhole(aggregateSummary.savingPct))}</div>
               </div>
             </div>
             <div class="action-summary-footer">${escapeHtml(formatNumber(aggregateSummary.tables))} oportunidades distribuídas nos blocos abaixo.</div>
           </div>
         `,
-      ].concat(groupSummaries.map(({ groupName, items, totalSaving, processingSaving, runtimeSaving }) => `
+      ].concat(groupSummaries.map(({ groupName, items, totalSaving, processingSaving, runtimeSaving, savingPct }) => `
           <div class="action-summary-card">
             <h4>${escapeHtml(groupName)}</h4>
             <div class="note">${escapeHtml(ACTION_GROUP_META[groupName] || 'Grupo de ação com mesma natureza de intervenção.')}</div>
             <div class="action-summary-metrics">
               <div class="action-summary-metric">
                 <div class="action-summary-label">Economia total</div>
-                <div class="action-summary-value">${escapeHtml(formatCurrency(totalSaving))}/mês</div>
+                <div class="action-summary-value">${escapeHtml(formatCurrencyWhole(totalSaving))}/mês</div>
               </div>
               <div class="action-summary-metric">
                 <div class="action-summary-label">Economia proc.</div>
-                <div class="action-summary-value">${escapeHtml(formatCurrency(processingSaving))}/mês</div>
+                <div class="action-summary-value">${escapeHtml(formatCurrencyWhole(processingSaving))}/mês</div>
               </div>
               <div class="action-summary-metric">
-                <div class="action-summary-label">Tempo evitado</div>
-                <div class="action-summary-value">${escapeHtml(formatNumber(runtimeSaving))} h/mês</div>
+                <div class="action-summary-label">Economia estimada</div>
+                <div class="action-summary-value">${escapeHtml(formatPercentWhole(savingPct))}</div>
               </div>
             </div>
-            <div class="action-summary-footer">${escapeHtml(formatNumber(items.length))} tabela(s) com ação neste bloco.</div>
+            <div class="action-summary-footer">${escapeHtml(formatNumber(items.length))} tabela(s) com ação neste bloco · ${escapeHtml(formatNumber(Math.round(runtimeSaving)))} h/mês evitadas.</div>
           </div>
         `)).join('');
       const tabs = ACTION_GROUP_ORDER.map((groupName) => {
