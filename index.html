@@ -449,7 +449,7 @@
     }
     .action-summary-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 16px;
       margin-bottom: 20px;
     }
@@ -467,6 +467,10 @@
     .action-summary-card h4 {
       margin: 0;
       font-size: 17px;
+    }
+    .action-summary-card.is-total {
+      background: linear-gradient(180deg, rgba(91,141,239,0.18) 0%, rgba(91,141,239,0.08) 100%);
+      border-color: rgba(91,141,239,0.28);
     }
     .action-summary-card .note {
       min-height: 40px;
@@ -568,8 +572,15 @@
       color: var(--text-2);
     }
     @media (max-width: 1080px) {
-      .action-summary-grid,
+      .action-summary-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
       .action-summary-metrics {
+        grid-template-columns: 1fr;
+      }
+    }
+    @media (max-width: 760px) {
+      .action-summary-grid {
         grid-template-columns: 1fr;
       }
     }
@@ -1080,13 +1091,13 @@
       const monthlyRuns = Number(exec.estimated_monthly_runs || 0);
       const weekdayRuns = Number(exec.weekday_monthly_runs || 22);
       const weekendReductionPct = monthlyRuns > 0 ? (monthlyRuns - weekdayRuns) / monthlyRuns : 0;
-      if (exec.is_daily_like && weekendReductionPct >= 0.18 && (row.score_efficiency >= 10 || row.avg_monthly_usage <= 120)) {
+      if (exec.is_daily_like && weekendReductionPct >= 0.18) {
         issues.push({
           group: 'Ajustar cadência para seg-sex',
           title: 'Execução diária com espaço para cortar fins de semana',
           evidence: `~${formatNumber(monthlyRuns)} exec./mês hoje vs ~${formatNumber(weekdayRuns)} em seg-sex | ${formatNumber((exec.weekend_run_share || 0) * 100)}% das runs na amostra caíram em fim de semana`,
           action: 'Avaliar migração do agendamento diário para seg-sex, preservando reruns manuais apenas quando houver dependência real de sábado/domingo.',
-          weight: Math.max(6, row.score_efficiency * 0.8),
+          weight: Math.max(7, row.score_efficiency * 0.75),
         });
       }
 
@@ -1361,12 +1372,49 @@ Sem uso com custo: ${formatNumber(item.zero_usage_with_cost)}`;
       if (!ACTION_GROUP_ORDER.includes(state.activeActionGroup)) {
         state.activeActionGroup = ACTION_GROUP_ORDER[0];
       }
-      const summaryCards = ACTION_GROUP_ORDER.map((groupName) => {
+      const groupSummaries = ACTION_GROUP_ORDER.map((groupName) => {
         const items = groups.get(groupName) || [];
         const totalSaving = items.reduce((sum, entry) => sum + (entry.issue.savings?.monthly_total_cost_saving || 0), 0);
         const processingSaving = items.reduce((sum, entry) => sum + (entry.issue.savings?.monthly_processing_cost_saving || 0), 0);
         const runtimeSaving = items.reduce((sum, entry) => sum + (entry.issue.savings?.monthly_runtime_hours_saving || 0), 0);
-        return `
+        return {
+          groupName,
+          items,
+          totalSaving,
+          processingSaving,
+          runtimeSaving,
+        };
+      });
+      const aggregateSummary = groupSummaries.reduce((acc, item) => {
+        acc.tables += item.items.length;
+        acc.totalSaving += item.totalSaving;
+        acc.processingSaving += item.processingSaving;
+        acc.runtimeSaving += item.runtimeSaving;
+        return acc;
+      }, { tables: 0, totalSaving: 0, processingSaving: 0, runtimeSaving: 0 });
+      const summaryCards = [
+        `
+          <div class="action-summary-card is-total">
+            <h4>Potencial total estimado</h4>
+            <div class="note">Somatória dos cinco blocos de ação do recorte atual, para leitura executiva rápida do tamanho da oportunidade.</div>
+            <div class="action-summary-metrics">
+              <div class="action-summary-metric">
+                <div class="action-summary-label">Economia total</div>
+                <div class="action-summary-value">${escapeHtml(formatCurrency(aggregateSummary.totalSaving))}/mês</div>
+              </div>
+              <div class="action-summary-metric">
+                <div class="action-summary-label">Economia proc.</div>
+                <div class="action-summary-value">${escapeHtml(formatCurrency(aggregateSummary.processingSaving))}/mês</div>
+              </div>
+              <div class="action-summary-metric">
+                <div class="action-summary-label">Tempo evitado</div>
+                <div class="action-summary-value">${escapeHtml(formatNumber(aggregateSummary.runtimeSaving))} h/mês</div>
+              </div>
+            </div>
+            <div class="action-summary-footer">${escapeHtml(formatNumber(aggregateSummary.tables))} oportunidades distribuídas nos blocos abaixo.</div>
+          </div>
+        `,
+      ].concat(groupSummaries.map(({ groupName, items, totalSaving, processingSaving, runtimeSaving }) => `
           <div class="action-summary-card">
             <h4>${escapeHtml(groupName)}</h4>
             <div class="note">${escapeHtml(ACTION_GROUP_META[groupName] || 'Grupo de ação com mesma natureza de intervenção.')}</div>
@@ -1386,8 +1434,7 @@ Sem uso com custo: ${formatNumber(item.zero_usage_with_cost)}`;
             </div>
             <div class="action-summary-footer">${escapeHtml(formatNumber(items.length))} tabela(s) com ação neste bloco.</div>
           </div>
-        `;
-      }).join('');
+        `)).join('');
       const tabs = ACTION_GROUP_ORDER.map((groupName) => {
         const count = (groups.get(groupName) || []).length;
         const activeClass = state.activeActionGroup === groupName ? 'active' : '';
