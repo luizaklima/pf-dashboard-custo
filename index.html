@@ -939,24 +939,24 @@
       const processingMonthly = Number(row.selected_months_count ? row.processing_cost / row.selected_months_count : row.processing_cost || 0);
       const totalMonthly = Number(row.avg_monthly_cost || 0);
       const storageMonthly = Number(totalMonthly * (row.storage_share || 0));
+      const storageCutPctBase = Math.min(0.35, 0.12 + (row.storage_share || 0) * 0.45 + ((artifact.partition_columns_count || 0) === 0 ? 0.08 : 0));
       let processingPct = 0;
-      let totalPct = 0;
+      let storagePct = 0;
       let runtimePct = 0;
 
       if (issue.group === 'Revisar produto e consumo') {
         if (row.avg_monthly_usage === 0) {
           processingPct = 0.6;
-          totalPct = 0.7;
+          storagePct = 0.7;
           runtimePct = 0.6;
         } else {
           processingPct = Math.min(0.22, 0.08 + Math.max(0, (row.score_efficiency - 18)) / 100);
-          totalPct = Math.min(0.35, 0.12 + Math.max(0, (row.score_efficiency - 16)) / 70);
+          storagePct = Math.min(0.18, 0.04 + Math.max(0, (row.score_efficiency - 16)) / 120);
           runtimePct = Math.min(0.2, processingPct + 0.03);
         }
       } else if (issue.group === 'Otimizar storage e modelagem') {
-        const storageCutPct = Math.min(0.35, 0.12 + (row.storage_share || 0) * 0.45 + ((artifact.partition_columns_count || 0) === 0 ? 0.08 : 0));
+        storagePct = storageCutPctBase;
         processingPct = Math.min(0.12, ((artifact.partition_columns_count || 0) === 0 ? 0.08 : 0.04) + (artifact.optimize_compaction === false ? 0.04 : 0));
-        totalPct = Math.min(0.4, (storageMonthly * storageCutPct + processingMonthly * processingPct) / Math.max(totalMonthly, 1));
         runtimePct = Math.min(0.12, processingPct + 0.02);
       } else if (issue.group === 'Refatorar notebook e plano Spark') {
         processingPct = Math.min(0.38,
@@ -966,27 +966,30 @@
           + Math.max(0, (signals.spark_sql_calls || 0) - 10) * 0.008
           + Math.max(0, (signals.persist_calls || 0) - 5) * 0.01
         );
-        totalPct = Math.min(0.3, processingPct * Math.max(0.55, row.processing_share || 0));
         runtimePct = Math.min(0.45, processingPct + 0.05);
       } else if (issue.group === 'Simplificar pipeline e orquestração') {
         const nodeSize = Math.max(extractNodeSize(artifact.node_type_id), extractNodeSize(artifact.driver_node_type_id));
         processingPct = Math.min(0.28, 0.08 + Math.max(0, (artifact.dependency_count || 0) - 8) * 0.012 + (nodeSize >= 12 ? 0.06 : nodeSize >= 8 ? 0.03 : 0));
-        totalPct = Math.min(0.26, processingPct * Math.max(0.45, row.processing_share || 0) + Math.min(0.08, depSeconds / Math.max(totalSeconds, 1)));
+        storagePct = Math.min(0.04, depSeconds / Math.max(totalSeconds, 1) * 0.05);
         runtimePct = Math.min(0.35, processingPct + (depSeconds / Math.max(totalSeconds, 1)) * 0.15);
       }
 
       const processingCostMonthly = Number((processingMonthly * processingPct).toFixed(2));
-      const totalCostMonthly = Number((issue.group === 'Otimizar storage e modelagem'
-        ? Math.min(totalMonthly, storageMonthly * Math.min(0.35, 0.12 + (row.storage_share || 0) * 0.45 + ((artifact.partition_columns_count || 0) === 0 ? 0.08 : 0)) + processingCostMonthly)
-        : totalMonthly * totalPct
-      ).toFixed(2));
+      const storageCostMonthly = Number((storageMonthly * storagePct).toFixed(2));
+      const totalCostMonthly = Number(Math.min(totalMonthly, processingCostMonthly + storageCostMonthly).toFixed(2));
       const runtimeHoursMonthly = Number((((issue.group === 'Simplificar pipeline e orquestração' ? totalSeconds : notebookSeconds) * monthlyRuns * runtimePct) / 3600).toFixed(1));
 
       return {
         monthly_total_cost_saving: Math.max(0, totalCostMonthly),
         monthly_processing_cost_saving: Math.max(0, processingCostMonthly),
+        monthly_storage_cost_saving: Math.max(0, storageCostMonthly),
         monthly_runtime_hours_saving: Math.max(0, runtimeHoursMonthly),
         estimated_monthly_runs: monthlyRuns,
+        current_total_monthly_cost: Math.max(0, Number(totalMonthly.toFixed(2))),
+        current_processing_monthly_cost: Math.max(0, Number(processingMonthly.toFixed(2))),
+        current_storage_monthly_cost: Math.max(0, Number(storageMonthly.toFixed(2))),
+        total_saving_pct: totalMonthly > 0 ? Math.max(0, totalCostMonthly / totalMonthly) : 0,
+        processing_saving_pct: processingMonthly > 0 ? Math.max(0, processingCostMonthly / processingMonthly) : 0,
       };
     }
 
@@ -1381,6 +1384,7 @@ Sem uso com custo: ${formatNumber(item.zero_usage_with_cost)}`;
               <tr>
                 <th>Tabela</th>
                 <th>Ação recomendada</th>
+                <th>Custo atual</th>
                 <th>Economia total</th>
                 <th>Economia proc.</th>
                 <th>Tempo</th>
@@ -1391,8 +1395,18 @@ Sem uso com custo: ${formatNumber(item.zero_usage_with_cost)}`;
                 <tr>
                   <td><strong>${escapeHtml(row.table_name)}</strong><div class="micro">${escapeHtml(issue.evidence)}</div></td>
                   <td>${escapeHtml(issue.action)}</td>
-                  <td>${escapeHtml(formatCurrency(issue.savings?.monthly_total_cost_saving || 0))}/mês</td>
-                  <td>${escapeHtml(formatCurrency(issue.savings?.monthly_processing_cost_saving || 0))}/mês</td>
+                  <td>
+                    <strong>${escapeHtml(formatCurrency(issue.savings?.current_total_monthly_cost || 0))}/mês</strong>
+                    <div class="micro">Proc.: ${escapeHtml(formatCurrency(issue.savings?.current_processing_monthly_cost || 0))}/mês</div>
+                  </td>
+                  <td>
+                    <strong>${escapeHtml(formatCurrency(issue.savings?.monthly_total_cost_saving || 0))}/mês</strong>
+                    <div class="micro">${escapeHtml(formatNumber((issue.savings?.total_saving_pct || 0) * 100))}% do custo atual</div>
+                  </td>
+                  <td>
+                    <strong>${escapeHtml(formatCurrency(issue.savings?.monthly_processing_cost_saving || 0))}/mês</strong>
+                    <div class="micro">${escapeHtml(formatNumber((issue.savings?.processing_saving_pct || 0) * 100))}% de proc.</div>
+                  </td>
                   <td>${escapeHtml(formatNumber(issue.savings?.monthly_runtime_hours_saving || 0))} h/mês</td>
                 </tr>
               `).join('')}
