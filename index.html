@@ -447,6 +447,79 @@
       grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
       gap: 16px;
     }
+    .action-summary-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+    .action-summary-card {
+      padding: 20px;
+      background: linear-gradient(180deg, var(--surface) 0%, var(--surface-2) 100%);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      box-shadow: var(--shadow);
+      min-height: 188px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .action-summary-card h4 {
+      margin: 0;
+      font-size: 17px;
+    }
+    .action-summary-card .note {
+      min-height: 40px;
+    }
+    .action-summary-metrics {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+    }
+    .action-summary-metric {
+      background: rgba(91,141,239,0.08);
+      border: 1px solid rgba(91,141,239,0.18);
+      border-radius: 14px;
+      padding: 12px;
+    }
+    .action-summary-label {
+      color: var(--text-2);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 6px;
+    }
+    .action-summary-value {
+      font-size: 20px;
+      font-weight: 700;
+      line-height: 1.1;
+    }
+    .action-summary-footer {
+      color: var(--text-2);
+      font-size: 12px;
+      margin-top: auto;
+    }
+    .action-subtabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+    .action-subtab {
+      border: 1px solid var(--border);
+      background: var(--surface-3);
+      color: var(--text);
+      border-radius: 12px;
+      padding: 10px 14px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 600;
+    }
+    .action-subtab.active {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
     .action-card {
       padding: 16px;
       background: var(--surface-2);
@@ -493,6 +566,12 @@
       position: static;
       background: transparent;
       color: var(--text-2);
+    }
+    @media (max-width: 1080px) {
+      .action-summary-grid,
+      .action-summary-metrics {
+        grid-template-columns: 1fr;
+      }
     }
     .empty-state { padding: 18px 0 4px; }
     @media (max-width: 1024px) {
@@ -672,7 +751,19 @@
     });
     const AVAILABLE_MONTHS = (DASHBOARD_DATA.available_months || []).slice().sort();
     const THEME_STORAGE_KEY = 'custozin-theme';
-    const state = { selectedMonths: [DASHBOARD_DATA.meta.ref_month], manager: '', owner: '', activeTab: 'overview' };
+    const ACTION_GROUP_ORDER = [
+      'Revisar produto e consumo',
+      'Otimizar storage e modelagem',
+      'Refatorar notebook e plano Spark',
+      'Simplificar pipeline e orquestração',
+    ];
+    const state = {
+      selectedMonths: [DASHBOARD_DATA.meta.ref_month],
+      manager: '',
+      owner: '',
+      activeTab: 'overview',
+      activeActionGroup: ACTION_GROUP_ORDER[0],
+    };
     const ACTION_GROUP_META = {
       'Revisar produto e consumo': 'Tabelas caras para o nível de uso atual; aqui o foco é reduzir materialização sem retorno claro ou redirecionar para datasets base.',
       'Otimizar storage e modelagem': 'Tabelas em que storage, retenção e layout físico parecem ser o principal vetor de economia.',
@@ -1243,16 +1334,48 @@ Sem uso com custo: ${formatNumber(item.zero_usage_with_cost)}`;
           groups.get(issue.group).push({ row, issue });
         });
       });
-      const sortedGroups = Array.from(groups.entries()).sort((a, b) => b[1].length - a[1].length || a[0].localeCompare(b[0]));
-      target.innerHTML = `<div class="action-group">${sortedGroups.map(([groupName, items]) => `
-        <div class="action-card">
-          <h4>${escapeHtml(groupName)}</h4>
-          <div class="note">${escapeHtml(ACTION_GROUP_META[groupName] || 'Grupo de ação com mesma natureza de intervenção.')}</div>
-          <div class="action-metrics">
-            <span class="savings-pill">Economia total estimada: ${escapeHtml(formatCurrency(items.reduce((sum, entry) => sum + (entry.issue.savings?.monthly_total_cost_saving || 0), 0)))}/mês</span>
-            <span class="savings-pill">Economia de processamento: ${escapeHtml(formatCurrency(items.reduce((sum, entry) => sum + (entry.issue.savings?.monthly_processing_cost_saving || 0), 0)))}/mês</span>
-            <span class="savings-pill">Tempo de notebook evitado: ${escapeHtml(formatNumber(items.reduce((sum, entry) => sum + (entry.issue.savings?.monthly_runtime_hours_saving || 0), 0)))} h/mês</span>
+      if (!ACTION_GROUP_ORDER.includes(state.activeActionGroup)) {
+        state.activeActionGroup = ACTION_GROUP_ORDER[0];
+      }
+      const summaryCards = ACTION_GROUP_ORDER.map((groupName) => {
+        const items = groups.get(groupName) || [];
+        const totalSaving = items.reduce((sum, entry) => sum + (entry.issue.savings?.monthly_total_cost_saving || 0), 0);
+        const processingSaving = items.reduce((sum, entry) => sum + (entry.issue.savings?.monthly_processing_cost_saving || 0), 0);
+        const runtimeSaving = items.reduce((sum, entry) => sum + (entry.issue.savings?.monthly_runtime_hours_saving || 0), 0);
+        return `
+          <div class="action-summary-card">
+            <h4>${escapeHtml(groupName)}</h4>
+            <div class="note">${escapeHtml(ACTION_GROUP_META[groupName] || 'Grupo de ação com mesma natureza de intervenção.')}</div>
+            <div class="action-summary-metrics">
+              <div class="action-summary-metric">
+                <div class="action-summary-label">Economia total</div>
+                <div class="action-summary-value">${escapeHtml(formatCurrency(totalSaving))}/mês</div>
+              </div>
+              <div class="action-summary-metric">
+                <div class="action-summary-label">Economia proc.</div>
+                <div class="action-summary-value">${escapeHtml(formatCurrency(processingSaving))}/mês</div>
+              </div>
+              <div class="action-summary-metric">
+                <div class="action-summary-label">Tempo evitado</div>
+                <div class="action-summary-value">${escapeHtml(formatNumber(runtimeSaving))} h/mês</div>
+              </div>
+            </div>
+            <div class="action-summary-footer">${escapeHtml(formatNumber(items.length))} tabela(s) com ação neste bloco.</div>
           </div>
+        `;
+      }).join('');
+      const tabs = ACTION_GROUP_ORDER.map((groupName) => {
+        const count = (groups.get(groupName) || []).length;
+        const activeClass = state.activeActionGroup === groupName ? 'active' : '';
+        return `<button class="action-subtab ${activeClass}" data-action-group="${escapeHtml(groupName)}">${escapeHtml(groupName)} (${escapeHtml(String(count))})</button>`;
+      }).join('');
+      const activeItems = (groups.get(state.activeActionGroup) || [])
+        .slice()
+        .sort((a, b) => (b.issue.savings?.monthly_total_cost_saving || 0) - (a.issue.savings?.monthly_total_cost_saving || 0) || b.row.monthly_score - a.row.monthly_score);
+      const activeContent = activeItems.length ? `
+        <div class="action-card">
+          <h4>${escapeHtml(state.activeActionGroup)}</h4>
+          <div class="note">${escapeHtml(ACTION_GROUP_META[state.activeActionGroup] || 'Grupo de ação com mesma natureza de intervenção.')}</div>
           <table class="action-table">
             <thead>
               <tr>
@@ -1264,7 +1387,7 @@ Sem uso com custo: ${formatNumber(item.zero_usage_with_cost)}`;
               </tr>
             </thead>
             <tbody>
-              ${items.sort((a, b) => (b.issue.savings?.monthly_total_cost_saving || 0) - (a.issue.savings?.monthly_total_cost_saving || 0) || b.row.monthly_score - a.row.monthly_score).map(({ row, issue }) => `
+              ${activeItems.map(({ row, issue }) => `
                 <tr>
                   <td><strong>${escapeHtml(row.table_name)}</strong><div class="micro">${escapeHtml(issue.evidence)}</div></td>
                   <td>${escapeHtml(issue.action)}</td>
@@ -1276,7 +1399,18 @@ Sem uso com custo: ${formatNumber(item.zero_usage_with_cost)}`;
             </tbody>
           </table>
         </div>
-      `).join('')}</div>`;
+      ` : `<div class="empty-state">Nenhuma tabela relevante para este bloco no recorte atual.</div>`;
+      target.innerHTML = `
+        <div class="action-summary-grid">${summaryCards}</div>
+        <div class="action-subtabs">${tabs}</div>
+        <div class="action-detail">${activeContent}</div>
+      `;
+      target.querySelectorAll('.action-subtab').forEach((button) => {
+        button.addEventListener('click', () => {
+          state.activeActionGroup = button.dataset.actionGroup;
+          renderActions(rows);
+        });
+      });
     }
 
     function renderFilterSummary(rows) {
